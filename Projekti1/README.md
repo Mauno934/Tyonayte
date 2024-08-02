@@ -25,6 +25,7 @@ data = data[data['Department'].apply(lambda x: not x.isnumeric() and len(x) < 10
 
 # Puuttuvien arvojen käsittely
 data.fillna('Unknown', inplace=True)
+```
 
 ### Tilastollinen analyysi
 Suoritin perusanalyysiä, kuten keskiarvon, mediaanin ja hajonnan laskemista eri osastoille.
@@ -35,7 +36,7 @@ average_contacts = data.groupby('Department').size().mean()
 
 # Mediaanin laskeminen
 median_contacts = data.groupby('Department').size().median()
-
+```
 ### Visualisoinnit
 Käytin Matplotlib- ja Seaborn-kirjastoja luodakseni visualisointeja, kuten histogrammeja ja boxplotteja, jotka auttoivat ymmärtämään datan jakaumaa.
 
@@ -50,11 +51,11 @@ plt.title('Distribution of Contacts per Department')
 plt.xlabel('Department')
 plt.ylabel('Number of Contacts')
 plt.show()
-
+```
 ### Syvällinen analyysi
 Analysoin dataa tarkemmin luomalla pivot-tauluja ja ristiintaulukoita, jotka auttoivat ymmärtämään yhteyksiä eri muuttujien välillä.
 
 ```python
 # Pivot-taulu osastojen kontaktimääristä
 pivot_table = data.pivot_table(index='Department', values='Contact_ID', aggfunc='count')
-
+```
