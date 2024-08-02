@@ -4,7 +4,7 @@ from scipy.stats import norm
 import matplotlib.pyplot as plt
 
 # Lataa datasetit
-companies_df = pd.read_csv("C:\\Users\\Juhom\\Downloads\\Companies.csv")
+companies_df = pd.read_csv("data.csv")
 
 # Suodata yritykset, joilla on vuotuinen liikevaihto
 companies_with_revenue_df = companies_df[companies_df['Annual_Revenue'].notna()].copy()
@@ -23,7 +23,7 @@ technology_presence_df = technology_presence_df.reindex(columns=unique_technolog
 companies_with_revenue_df['Technology_Count'] = technology_presence_df.sum(axis=1)
 
 # Valitse lopullisen DataFramen relevantit sarakkeet
-final_df = companies_with_revenue_df[['Apollo_Account_Id', 'Annual_Revenue', 'Industry', 'Technology_Count', 'Lists']].copy()
+final_df = companies_with_revenue_df[['CompanyID', 'Annual_Revenue', 'Industry', 'Technology_Count', 'Lists']].copy()
 final_df = pd.concat([final_df.reset_index(drop=True), technology_presence_df], axis=1)
 
 # Varmistetaan, että kaikki unique_technologies -elementit ovat final_df -DataFramessa
@@ -68,7 +68,7 @@ technology_stats = technology_stats[technology_stats['Presence'] > 0].groupby('T
 industry_stats = final_df.groupby('Industry')['Annual_Revenue'].agg(['mean', 'max', 'min', 'median', 'count'])
 
 # Valitse ja järjestä vaaditut sarakkeet
-final_df = final_df[['Apollo_Account_Id', 'Annual_Revenue', 'Tech_Correlation_with_revenue', 'Industry_Correlation_with_revenue', 
+final_df = final_df[['CompanyID', 'Annual_Revenue', 'Tech_Correlation_with_revenue', 'Industry_Correlation_with_revenue', 
                      'Technology_Count', 'Industry_Ranking', 'Technology_General_Valence'] + unique_technologies_in_final_df]
 
 # Tallenna lopullinen DataFrame CSV-tiedostoon Power BI -analyysiä varten
