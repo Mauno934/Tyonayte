@@ -1079,6 +1079,12 @@ plt.show()
 
 
 
+#### Visuaalinen muokkaus ja filtteröinti Power BI:ssä
+
+Tein vielä pari kaavioita datasta ja harjoittelin muokkaamista ja filtteröintiä ehdollisilla säännöillä. Ensimmäisessä kuvassa on filtteröity top 25 käyttäen top N filtteröintiä ja toisessa on kaikki toimialat pisteiden keskiarvoineen laitettu piirakkakaavioon.
+
+![Top25](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20175548.png?raw=true)
+![Pie](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20180958.png?raw=true)
 
 
 
