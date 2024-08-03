@@ -944,6 +944,8 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 ```
+</details>
+
 <details>
     <summary>DAX koodi</summary>
   
