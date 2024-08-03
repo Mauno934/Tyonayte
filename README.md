@@ -809,6 +809,20 @@ UNION(
         "NormalValueMerged", [NormalValue2]
     )
 )
+
+// Normaalijakauman määrittelyt
+NormalDistributionTable1 = 
+VAR Mean1 = [MeanCount]
+VAR StdDev1 = [StdDevCount]
+VAR ScalingFactor = 10000  // Valitse sopiva skaalauskerroin
+RETURN 
+ADDCOLUMNS(
+    GENERATESERIES(Mean1 - 4 * StdDev1, Mean1 + 4 * StdDev1, StdDev1 / 10),
+    "NormalValue", 
+    (ScalingFactor * (1 / (StdDev1 * SQRT(2 * PI()))) * EXP(-0.5 * (([Value] - Mean1) / StdDev1) ^ 2))
+)
+MeanCount = CALCULATE(AVERAGE(Top_10_Departments_Counts[Count]))
+StdDevCount = CALCULATE(STDEV.P(Top_10_Departments_Counts[Count]))
 ```
 </details>
 Normaalijakauma onnistui lopulta, vaikka ei ole tässä esimerkissä kuvaavin, niin pääsin oppimaan paljon Power BI:n käytöstä.
