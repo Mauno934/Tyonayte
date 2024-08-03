@@ -212,7 +212,7 @@ companies_df['Score'] = (
 ```python
 import numpy as np
 
-# Esilaskenta tarvittaville mapituksille
+# Esilaskenta 
 company_name_mapping = companies_df.set_index('Account_Id')['Company'].to_dict()
 
 # Vektorisoitu pisteytys kontakteille
@@ -371,7 +371,7 @@ industry_correlation_corr = industry_correlation.corr()['Annual_Revenue'].drop('
 # Järjestä teollisuudet niiden liikevaihtokorrelaation mukaan
 industry_ranking = industry_correlation_corr.rank(ascending=False).to_dict()
 
-# Arvota teknologiat niiden liikevaihtokorrelaation mukaan käyttäen normaalia jakaumaa
+# Arvota teknologiat niiden liikevaihtokorrelaation mukaan käyttäen normaalijakaumaa
 technology_scores = norm.cdf(correlation_with_revenue)
 
 # Laske Technology_General_Valence-pisteet
@@ -535,7 +535,7 @@ Tässä vertailussa otamme käytännön toteutuksen OpenAI API:sta yhdistettynä
 #### Tavallinen tapa
 ```python
 regex_patterns = [
-    r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  # Original regex
+    r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  
     r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
     r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
     r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
@@ -734,42 +734,47 @@ def search_info(company, search_type, site):
 #API määrittely...
 
 regex_patterns = [
-        r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  # Original regex
-        r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos"  # New regex
-        r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
-        r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
-        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
-        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €)",
-        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ milj\. €)",
-        r"Liikevaihto ([\d\s,]+ milj\. €)",
-        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €) ja liikevaihdon muutos",
-        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ €) ja henkilöstömäärä",
-        r"Taloustiedot\. Liikevaihto\. ([\d\s,]+ milj\. €)"
-    ]
-    
-    best_info_with_data = None  # Best match that contains "liikevaihto" and its data
-    best_info_without_data = None  # Best match that contains "liikevaihto" but no data
-    fallback_info = None  # Fallback information if "liikevaihto" is not found
-    
-    for result in results.get("webPages", {}).get("value", []):
-        snippet = result.get("snippet", "")
-        anchor_text = result.get("name", "")
-        
-        if is_distinct_word_in_text(preprocess_company_name(company).lower(), anchor_text.lower()):
-            for regex in regex_patterns:
-                match = re.search(regex, snippet)
-                if match:
-                    break  # Exit the loop once a match is found
-            
-            if "liikevaihto" in snippet.lower():
-                if match:
-                    best_info_with_data = (match.group(1) if search_type == "Liikevaihto" else match.group(0)), snippet, anchor_text
-                elif not best_info_without_data:
-                    best_info_without_data = "Contains liikevaihto but no data", snippet, anchor_text
-            elif not fallback_info:
-                fallback_info = "Page exists, but no liikevaihto info", snippet, anchor_text
+    r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  # Alkuperäinen regex
+    r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",  # Uusi regex
+    r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
+    r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €)",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ milj\. €)",
+    r"Liikevaihto ([\d\s,]+ milj\. €)",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €) ja liikevaihdon muutos",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ €) ja henkilöstömäärä",
+    r"Taloustiedot\. Liikevaihto\. ([\d\s,]+ milj\. €)"
+]
 
-    return best_info_with_data if best_info_with_data else (best_info_without_data if best_info_without_data else (fallback_info if fallback_info else (None, "", "")))
+best_info_with_data = None  # Paras osuma, joka sisältää "liikevaihto" ja siihen liittyvän datan
+best_info_without_data = None  # Paras osuma, joka sisältää "liikevaihto" mutta ei dataa
+fallback_info = None  # Varatieto, jos "liikevaihto" ei löydy
+
+# Käydään läpi hakutulokset
+for result in results.get("webPages", {}).get("value", []):
+    snippet = result.get("snippet", "")  # Ote tekstistä
+    anchor_text = result.get("name", "")  # Sivun otsikko
+    
+    # Tarkistetaan, sisältääkö sivun otsikko yrityksen nimen
+    if is_distinct_word_in_text(preprocess_company_name(company).lower(), anchor_text.lower()):
+        for regex in regex_patterns:
+            match = re.search(regex, snippet)  # Etsitään regex osumia otteesta
+            if match:
+                break  # Lopetetaan silmukka, kun osuma löytyy
+        
+        # Tarkistetaan, sisältääkö ote "liikevaihto"
+        if "liikevaihto" in snippet.lower():
+            if match:
+                best_info_with_data = (match.group(1) if search_type == "Liikevaihto" else match.group(0)), snippet, anchor_text
+            elif not best_info_without_data:
+                best_info_without_data = "Sisältää liikevaihto mutta ei dataa", snippet, anchor_text
+        elif not fallback_info:
+            fallback_info = "Sivu olemassa, mutta ei liikevaihto tietoa", snippet, anchor_text
+
+# Palautetaan paras osuma, varatieto tai tyhjä arvo
+return best_info_with_data if best_info_with_data else (best_info_without_data if best_info_without_data else (fallback_info if fallback_info else (None, "", "")))
+
 ```
 
 Nämä ovat vain esimerkkitoteutuksia yleisestä loogisesta ajattelusta mitä kuuluu tekoälyratkaisuihin, hyötyjen arviointiin suhteessa kustannukiin. Pitkään minua on myös innostanut idea jossa tekoäly pyrkisi syvällisempään
@@ -849,7 +854,7 @@ UNION(
 NormalDistributionTable1 = 
 VAR Mean1 = [MeanCount]
 VAR StdDev1 = [StdDevCount]
-VAR ScalingFactor = 10000  // Valitse sopiva skaalauskerroin
+VAR ScalingFactor = 10000  // skaalauskerroin
 RETURN 
 ADDCOLUMNS(
     GENERATESERIES(Mean1 - 4 * StdDev1, Mean1 + 4 * StdDev1, StdDev1 / 10),
@@ -884,7 +889,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 # Ladataan datasetit
-companies_df = pd.read_csv("data.csv")  # Korvaa tämä polulla omaan Companies CSV-tiedostoon
+companies_df = pd.read_csv("data.csv")  
 
 # Suodatetaan yritykset, joilla on vuosiliikevaihto saatavilla
 companies_with_revenue_df = companies_df[companies_df['Annual_Revenue'].notna()]
@@ -1043,7 +1048,7 @@ def calculate_correlation_matrix(df, columns):
     correlation_matrix = df[columns].corr()
     return correlation_matrix
 
-# Määritä sarakkeet korrelaatiota varten (voit muokata tätä listaa tarpeen mukaan)
+# Määritä sarakkeet korrelaatiota varten 
 columns_for_correlation = ['Score', 'Industry_Code']  # Lisää tai poista sarakkeita tarpeen mukaan
 
 # Lasketaan korrelaatiomatriisi
@@ -1060,7 +1065,7 @@ correlation_long_format.to_csv('correlation_matrix.csv', index=False)
 print("Korrelaatiomatriisi (pitkä muoto):")
 print(correlation_long_format)
 
-# Valinnainen: Piirretään korrelaatiomatriisi visualisointia varten
+# Piirretään korrelaatiomatriisi visualisointia varten
 plt.figure(figsize=(8, 6))
 plt.matshow(correlation_matrix, cmap='coolwarm', fignum=1)
 plt.xticks(range(len(correlation_matrix.columns)), correlation_matrix.columns, rotation=45)
