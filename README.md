@@ -491,3 +491,151 @@ final_df.loc[:, 'Technology_General_Valence'] = final_df['Lists'].apply(lambda x
 ```
 Tämä lambda-funktio laskee sarakkeen 'Technology_General_Valence' arvot laskemalla, kuinka monta kertaa kukin teknologia esiintyy 'Lists'-sarakkeessa ja lisäämällä siihen 'technology_median_score' -arvon. Tämä antaa yleisen arvion teknologian yleisyydestä ja merkityksestä.
 <details/>
+
+# Modernit tietokantaratkaisut tekoälyllä
+
+## AI-vertailu: Regex-työmäärän tarkastelu
+Tässä vertailussa otamme käytännön toteutuksen OpenAI API:sta yhdistettynä Bing search API:iin. Skriptit ovat tehtyjä tutkimustarkoitukseen ja käyttävät snippettejä bing hausta eivätkä mene sivuille itsessään. 
+
+### Liikevaihtoskripti
+```python
+regex_patterns = [
+    r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  # Original regex
+    r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
+    r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
+    r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €)",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ milj\. €)",
+    r"Liikevaihto ([\d\s,]+ milj\. €)",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €) ja liikevaihdon muutos",
+    r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ €) ja henkilöstömäärä",
+    r"Taloustiedot\. Liikevaihto\. ([\d\s,]+ milj\. €)"
+]
+```
+Tästä löytyy jo jonkinverran regexiä, ja kun ottaa huomioon esimerkiksi tilanteen jossa verrataan silmukassa parhaita ehdokkaita, regexin käyttäminen datan arviointiin on huomattavasti työläämpi ja vaatii paljon kehitystä.
+Jos myös verrataan tilanteeseen jossa AI valitsee oikean ehdokkaan ja tekee arvion sekä luo listan tiedoista, listan järjestyksen vastaus ei tekoälyn luonteesta johtuen aina ole oikea, mutta pienellä määrällä Regex funktioita
+pystytään asia korjaamaan. 
+
+### Tekoälyversio
+
+```python
+# Jäsennä taloudellinen tieto
+def parse_financial_info(financial_info):
+    # Luodaan lista vakioarvoilla
+    parsed_data = {
+        "Revenue": "N/A",
+        "Revenue Change": "N/A",
+        "Annual Profit": "N/A",
+        "CEO": "N/A",
+        "Founding Year": "N/A"
+    }
+    
+    # Uusi rivi määrittelee datan parseemisen
+    info_list = financial_info.split("\n")
+    
+    # Tarkista onko pituus oikein
+    if len(info_list) >= 5:
+        parsed_data["Revenue"] = info_list[0].strip()
+        parsed_data["Revenue Change"] = info_list[1].strip()
+        parsed_data["Annual Profit"] = info_list[2].strip()
+        parsed_data["CEO"] = info_list[3].strip()
+        parsed_data["Founding Year"] = info_list[4].strip()
+    else:
+        # Jos pituus ei ole oikein tai järjestys, TODO: laitetaan regex sekä paremmat tunnistukset virheellisistä tiedoista
+        print("Warning: Incomplete financial information received.")
+        
+    return parsed_data
+```
+
+
+
+## Vertailu regex-työmäärästä:
+
+### LiikevaihtoSkripti:
+- Sisältää yhteensä 11 regex-kuviota, jotka on suunniteltu tunnistamaan erilaisia liikevaihtoon liittyviä ilmaisuja.
+- Vertailussa voi tulla potentiaalisesti monia erilaisia ilmaisutapoja sekä samoilla sivuilla niin myöskin eri sivuilla
+- Regex-kuviot ovat monimutkaisempia ja kattavat useita erilaisia tapoja ilmaista liikevaihto, kuten tuhannet eurot, miljoonat eurot, ja liikevaihdon muutos.
+- Regex-työmäärä on huomattavasti suurempi, koska se käsittelee useita eri muotoisia ja monimutkaisia liikevaihtoon liittyviä lauseita.
+- Skripti tällaisenaan tuskin kattaa mitenkään hyvin käyttötarkoitusta
+- Edullisempi
+
+### Tekoäly:
+- Ainoastaan datan esikäsittelyyn sekä oikeellisuuden tarkastamiseen tarvittavia regex lauseita.
+- Melko vakaa formaatti joka kehittyy mallien kehittyessä
+- Käyttötarkoitusta ja analyysia helpompi laajentaa
+- Kalliimpi
+
+### Hybridiversio:
+- Etuna on kontekstin tehokkaampi rajaus, ja api kutsut vähenevät OpenAI:lle.
+- Laaduntakaaminen ratkaisussa, kustannusten hallinta. 
+
+
+## Teknisiä osuuksia
+
+Tekoälyn käyttö oikean datan valinnassa mahdollistaa sen että laittaa loogisia parametrejä, joita tekoäly voi käyttää tietona sekä itse tekoälyn päättelykyvyn
+
+```python
+def select_best_candidate(candidates):
+    global last_openai_request_time
+    last_openai_request_time = rate_limit(last_openai_request_time, time_between_requests)
+    
+    prompt = "Given the following financial snippets, which one is most likely to be the correct company?\n"
+    for i, candidate in enumerate(candidates):
+        prompt += f"{i+1}. {candidate}\n"
+    
+    try:
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo-instruct",
+            prompt=prompt,
+            max_tokens=50  # Kasvata token-rajoitusta, jotta saadaan koko vastaus
+        )
+        
+        # Pura mallin vastauksesta valinta
+        text_response = response['choices'][0]['text'].strip()
+        choice_match = re.search(r'\d+', text_response)
+        
+        #Jos löytyy numero, käytä sitä valintana
+        if choice_match:
+            choice = int(choice_match.group()) - 1  # Muuta yksipohjaiseksi indeksiksi
+            return candidates[choice]
+        else:
+            print(f"Unexpected response format: {text_response}")
+            return candidates[0]  # Jos vastausformaatti on odottamaton, tulosta virhe ja palauta ensimmäinen ehdokas (ehkä ei paras idea)
+```
+
+Looginen rajaus:
+
+```python
+# Tarkista onko sana erillinen tekstissä
+def is_distinct_word_in_text(word, text):
+    pattern = r'\b' + re.escape(word) + r'\b'
+    return re.search(pattern, text, re.IGNORECASE) is not None
+
+# Analysoi ja tallenna tiedot
+def analyze_and_store_data(data, company):
+    candidates = []
+    try:
+        for result in data['webPages']['value']:
+            url = result['url']
+            if any(site in url for site in ['finder.fi', 'asiakastieto.fi', 'vainu.io']):
+                anchor_text = result['name']
+                snippet = result['snippet']
+                if is_distinct_word_in_text(company, anchor_text):
+                    candidates.append(snippet)
+        
+        if candidates:
+            best_candidate = select_best_candidate(candidates)
+            financial_info = analyze_snippet(best_candidate)
+            parsed_data = parse_financial_info(financial_info)
+            store_data_in_workbook(company, parsed_data)
+    except KeyError:
+        with workbook_lock:
+            ws.append([company, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
+```
+
+
+
+
+
+
