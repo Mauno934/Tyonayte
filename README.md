@@ -576,6 +576,35 @@ def parse_financial_info(financial_info):
 Tekoälyn käyttö oikean datan valinnassa mahdollistaa sen että laittaa loogisia parametrejä, joita tekoäly voi käyttää tietona sekä itse tekoälyn päättelykyvyn
 
 ```python
+# Tarkista onko sana erillinen tekstissä
+def is_distinct_word_in_text(word, text):
+    pattern = r'\b' + re.escape(word) + r'\b'
+    return re.search(pattern, text, re.IGNORECASE) is not None
+
+# Analysoi ja tallenna tiedot
+def analyze_and_store_data(data, company):
+    candidates = []
+    try:
+        for result in data['webPages']['value']:
+            url = result['url']
+            if any(site in url for site in ['finder.fi', 'asiakastieto.fi', 'vainu.io']):
+                anchor_text = result['name']
+                snippet = result['snippet']
+                if is_distinct_word_in_text(company, anchor_text):
+                    candidates.append(snippet)
+        
+        if candidates:
+            best_candidate = select_best_candidate(candidates)
+            financial_info = analyze_snippet(best_candidate)
+            parsed_data = parse_financial_info(financial_info)
+            store_data_in_workbook(company, parsed_data)
+    except KeyError:
+        with workbook_lock:
+            ws.append([company, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
+```
+Tekoäly valitsee parhaan ehdokkaan
+
+```python
 def select_best_candidate(candidates):
     global last_openai_request_time
     last_openai_request_time = rate_limit(last_openai_request_time, time_between_requests)
@@ -604,38 +633,112 @@ def select_best_candidate(candidates):
             return candidates[0]  # Jos vastausformaatti on odottamaton, tulosta virhe ja palauta ensimmäinen ehdokas (ehkä ei paras idea)
 ```
 
-Looginen rajaus:
+Tekoäly analysoi valitsemansa katkealman ja purkaa tiedot järjestyksessä johon on varmistusmekanismeja
 
 ```python
-# Tarkista onko sana erillinen tekstissä
-def is_distinct_word_in_text(word, text):
-    pattern = r'\b' + re.escape(word) + r'\b'
-    return re.search(pattern, text, re.IGNORECASE) is not None
-
-# Analysoi ja tallenna tiedot
-def analyze_and_store_data(data, company):
-    candidates = []
+# Analysoi tekstikatkelma
+def analyze_snippet(snippet):
+    global last_openai_request_time
+    last_openai_request_time = rate_limit(last_openai_request_time, time_between_requests)
+    
+    prompt = f"Extract the following financial information from the snippet: {snippet}. Please provide the latest information in the following order: 1. Revenue (only numbers), 2. Revenue Change(+/- value), 3. Annual Profit (+/- value), 4. CEO, 5. Founding Year."
+    
     try:
-        for result in data['webPages']['value']:
-            url = result['url']
-            if any(site in url for site in ['finder.fi', 'asiakastieto.fi', 'vainu.io']):
-                anchor_text = result['name']
-                snippet = result['snippet']
-                if is_distinct_word_in_text(company, anchor_text):
-                    candidates.append(snippet)
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo-instruct",
+            prompt=prompt,
+            max_tokens=100  # Säätövaraa
+        )
         
-        if candidates:
-            best_candidate = select_best_candidate(candidates)
-            financial_info = analyze_snippet(best_candidate)
-            parsed_data = parse_financial_info(financial_info)
-            store_data_in_workbook(company, parsed_data)
-    except KeyError:
-        with workbook_lock:
-            ws.append([company, 'N/A', 'N/A', 'N/A', 'N/A', 'N/A'])
+        if 'choices' in response and 'text' in response['choices'][0]:
+            financial_info = response['choices'][0]['text'].strip()
+            return financial_info  # Tässä taloustietojen toivon mukaan pitäisi olla oikeassa järjestyksessä
+        else:
+            print("Unexpected response format.")
+            return None
+            
+    except (Exception, openai.error.InvalidRequestError) as e:  # OpenAI yleiset virheet
+        print(f"API Request failed: {e}")
+        return None
 ```
 
+Hybridi rajaus voisi olla esimerkiksi tällainen 
 
+```python
+def select_best_candidate(candidates):
+    global last_openai_request_time
+    last_openai_request_time = rate_limit(last_openai_request_time, time_between_requests)
+    
+    prompt = "Given the following financial snippets, which one is most likely to be the correct company?\n"
+    for i, candidate in enumerate(candidates):
+        prompt += f"{i+1}. {candidate}\n"
+    
+    try:
+        response = openai.Completion.create(
+            engine="gpt-3.5-turbo-instruct",
+            prompt=prompt,
+            max_tokens=50  # Kasvata token-rajoitusta, jotta saadaan koko vastaus
+        )
+        
+        # Pura mallin vastauksesta valinta
+        text_response = response['choices'][0]['text'].strip()
+        choice_match = re.search(r'\d+', text_response)
+        
+        #Jos löytyy numero, käytä sitä valintana
+        if choice_match:
+            choice = int(choice_match.group()) - 1  # Muuta yksipohjaiseksi indeksiksi
+            return candidates[choice]
+        else:
+            print(f"Unexpected response format: {text_response}")
+            return candidates[0]  # Jos vastausformaatti on odottamaton, tulosta virhe ja palauta ensimmäinen ehdokas (ehkä ei paras idea)
+```
+Valinnan jälkeen käytetään regex
 
+```python
+def search_info(company, search_type, site):
+#API määrittely...
+
+regex_patterns = [
+        r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  # Original regex
+        r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos"  # New regex
+        r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
+        r"Liikevaihto \(tuhatta euroa\) [\d\s:]*?(\d+): Liikevaihdon muutos",
+        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",
+        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €)",
+        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ milj\. €)",
+        r"Liikevaihto ([\d\s,]+ milj\. €)",
+        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ t\. €) ja liikevaihdon muutos",
+        r"liikevaihto oli edellisenä tilikautena ([\d\s,]+ €) ja henkilöstömäärä",
+        r"Taloustiedot\. Liikevaihto\. ([\d\s,]+ milj\. €)"
+    ]
+    
+    best_info_with_data = None  # Best match that contains "liikevaihto" and its data
+    best_info_without_data = None  # Best match that contains "liikevaihto" but no data
+    fallback_info = None  # Fallback information if "liikevaihto" is not found
+    
+    for result in results.get("webPages", {}).get("value", []):
+        snippet = result.get("snippet", "")
+        anchor_text = result.get("name", "")
+        
+        if is_distinct_word_in_text(preprocess_company_name(company).lower(), anchor_text.lower()):
+            for regex in regex_patterns:
+                match = re.search(regex, snippet)
+                if match:
+                    break  # Exit the loop once a match is found
+            
+            if "liikevaihto" in snippet.lower():
+                if match:
+                    best_info_with_data = (match.group(1) if search_type == "Liikevaihto" else match.group(0)), snippet, anchor_text
+                elif not best_info_without_data:
+                    best_info_without_data = "Contains liikevaihto but no data", snippet, anchor_text
+            elif not fallback_info:
+                fallback_info = "Page exists, but no liikevaihto info", snippet, anchor_text
+
+    return best_info_with_data if best_info_with_data else (best_info_without_data if best_info_without_data else (fallback_info if fallback_info else (None, "", "")))
+```
+
+Nämä ovat vain esimerkkitoteutuksia yleisestä loogisesta ajattelusta mitä kuuluu tekoälyratkaisuihin, hyötyjen arviointiin suhteessa kustannukiin. Pitkään minua on myös innostanut idea jossa tekoäly pyrkisi syvällisempään
+ymmärrykseen esimerkiksi asiakkaan tarpeista, mahdollisista parhaista asiakkaista tai toimenpiteistä heidän nykyisessä tilanteessaan. 
 
 
 
