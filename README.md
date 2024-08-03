@@ -4,28 +4,11 @@ Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehd�
 siinä olisi mitään kyseenalaista tietoturvan tai muun kannalta, joka koski myös erilaisia sarakkeita sekä lähteitä. Nykyisessä työpaikassa visualisointi ei ole ollut prioriteetti joten tästä tuli mielenkiintoinen kokeilu. 
 Sisällytin kuitenkin myös paljon omaa koodia tähän jotka loin aikapitkälti lennosta, tai yhdistämällä joitain aiemmin luotuja komponentteja. 
 Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä että on ollut vain muutama päivä aikaa, koodini ei vastaa asynkronoitua ja monesti refakturoitua koodia. 
-# Python ja Power BI -työnäyte: Osastojen Analyysi, Pisteytysjärjestelmä ja IndustryMapping
+Python ja Power BI -työnäyte: Osastojen Analyysi, Pisteytysjärjestelmä ja IndustryMapping
 
 Tässä työnäytteessä esittelen Pythonilla ja Power BI:llä tekemiäni datan käsittely- ja visualisointitehtäviä. Työssä käytin olemassa olevia taitojani ja kehitin uusia, erityisesti datan analysoinnissa ja visualisoinnissa. Tämä dokumentti sisältää esimerkkejä Python-koodista ja Power BI -visualisoinneista, jotka on luotu tukemaan päätöksentekoa.
 
-## Sisällysluettelo
-- [Python ja Power BI -työnäyte: Osastojen Analyysi, Pisteytysjärjestelmä ja IndustryMapping](#python-ja-power-bi--työnäyte-osastojen-analyysi-pisteytysjärjestelmä-ja-industrymapping)
-  - [Osastojen Analyysi Pythonilla](#osastojen-analyysi-pythonilla)
-    - [Datan Esikäsittely](#datan-esikäsittely)
-  - [Pisteytysjärjestelmän Kehitys](#pisteytysjärjestelmän-kehitys)
-    - [Datan Pisteytys](#datan-pisteytys)
-      - [Kontaktien Pisteytys](#kontaktien-pisteytys)
-      - [Yritysten Pisteytys](#yritysten-pisteytys)
-  - [Analyysi: Teknologioiden ja Toimialojen Vaikutus Liikevaihtoon](#analyysi-teknologioiden-ja-toimialojen-vaikutus-liikevaihtoon)
-    - [Datasetin Lataaminen ja Esikäsittely](#datasetin-lataaminen-ja-esikäsittely)
-    - [Teknologioiden Erottelu ja Lähtötietojen Valmistelu](#teknologioiden-erottelu-ja-lähtötietojen-valmistelu)
-    - [Teknologioiden Lukumäärän Laskenta Yrityksille](#teknologioiden-lukumäärän-laskenta-yrityksille)
-    - [Korrelaatioiden Laskenta ja Tulosten Yhdistäminen](#korrelaatioiden-laskenta-ja-tulosten-yhdistäminen)
-    - [Tilastot Teknologioille ja Toimialoille](#tilastot-teknologioille-ja-toimialoille)
-    - [Lopullisten Tulosten Tallentaminen](#lopullisten-tulosten-tallentaminen)
-    - [Tulosten Tulostaminen ja Muotoilu](#tulosten-tulostaminen-ja-muotoilu)
-  - [Power BI](#power-bi)
-    - [Datan formatointi ja visualisointi](#datan-formatointi-ja-visualisointi)
+
 
 ## Osastojen Analyysi Pythonilla
 
