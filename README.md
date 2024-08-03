@@ -410,7 +410,8 @@ print("Toimialat ja niiden korrelaatiot liikevaihtoon sekä keskiarvoinen liikev
 print(industry_correlation_df)
 ```
 <details>
-# Lambda-funktioiden selitykset:
+    <summary>Lambda-funktioiden selitykset:</summary>
+
 ## Keskiarvo_liikevaihto:
 
 ```python
