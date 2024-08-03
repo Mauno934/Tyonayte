@@ -490,7 +490,7 @@ Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMedian' arvot tuhaterotinp
 final_df.loc[:, 'Technology_General_Valence'] = final_df['Lists'].apply(lambda x: len(str(x).split(','))) + technology_median_score
 ```
 Tämä lambda-funktio laskee sarakkeen 'Technology_General_Valence' arvot laskemalla, kuinka monta kertaa kukin teknologia esiintyy 'Lists'-sarakkeessa ja lisäämällä siihen 'technology_median_score' -arvon. Tämä antaa yleisen arvion teknologian yleisyydestä ja merkityksestä.
-<details/>
+</details>
 
 # Modernit tietokantaratkaisut tekoälyllä
 
