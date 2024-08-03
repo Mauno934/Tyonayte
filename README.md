@@ -1,4 +1,4 @@
-# Työnäyte, Python / SQL / Power BI / AI / Suorituskyky
+# Työnäyte, Python / SQL / Power BI / AI 
 
 Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille työnäytteen jossa näkyy jo olemassa olevia taitoja sekä tehtyä työtä. En halunnut jakaa dataa sellaisena että
 siinä olisi mitään kyseenalaista tietoturvan tai muun kannalta, joka koski myös erilaisia sarakkeita sekä lähteitä. Nykyisessä työpaikassa visualisointi ei ole ollut prioriteetti joten tästä tuli mielenkiintoinen kokeilu. 
@@ -6,7 +6,37 @@ Sisällytin kuitenkin myös paljon omaa koodia tähän jotka loin aikapitkälti 
 Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä että on ollut vain muutama päivä aikaa, koodini ei vastaa asynkronoitua ja monesti refakturoitua koodia. 
 Python ja Power BI -työnäyte: Osastojen Analyysi, Pisteytysjärjestelmä ja IndustryMapping
 
-Tässä työnäytteessä esittelen Pythonilla ja Power BI:llä tekemiäni datan käsittely- ja visualisointitehtäviä. Työssä käytin olemassa olevia taitojani ja kehitin uusia, erityisesti datan analysoinnissa ja visualisoinnissa. Tämä dokumentti sisältää esimerkkejä Python-koodista ja Power BI -visualisoinneista, jotka on luotu tukemaan päätöksentekoa.
+Tässä työnäytteessä esittelen Pythonilla ja Power BI:llä tekemiäni datan käsittely- ja visualisointitehtäviä. Työssä käytin olemassa olevia taitojani ja kehitin uusia, erityisesti datan analysoinnissa ja visualisoinnissa. Tämä dokumentti sisältää esimerkkejä Python-koodista ja Power BI -visualisoinneista, sekä pienen osuuden tekoälystä.
+
+
+## Sisällysluettelo
+- [Työnäyte, Python / SQL / Power BI / AI / Suorituskyky](#työnäyte-python--sql--power-bi--ai--suorituskyky)
+- [Python ja Power BI -työnäyte: Osastojen Analyysi, Pisteytysjärjestelmä ja IndustryMapping](#python-ja-power-bi--työnäyte-osastojen-analyysi-pisteytysjärjestelmä-ja-industrymapping)
+  - [Osastojen Analyysi Pythonilla](#osastojen-analyysi-pythonilla)
+    - [Datan Esikäsittely](#datan-esikäsittely)
+  - [Pisteytysjärjestelmän Kehitys](#pisteytysjärjestelmän-kehitys)
+    - [Datan Pisteytys](#datan-pisteytys)
+      - [Kontaktien Pisteytys](#kontaktien-pisteytys)
+      - [Yritysten Pisteytys](#yritysten-pisteytys)
+  - [Analyysi: Teknologioiden ja Toimialojen Korrelaatio Liikevaihtoon](#analyysi-teknologioiden-ja-toimialojen-korrelaatio-liikevaihtoon)
+    - [Datasetin Lataaminen ja Esikäsittely](#datasetin-lataaminen-ja-esikäsittely)
+    - [Teknologioiden Erottelu ja Lähtötietojen Valmistelu](#teknologioiden-erottelu-ja-lähtötietojen-valmistelu)
+    - [Teknologioiden Lukumäärän Laskenta Yrityksille](#teknologioiden-lukumäärän-laskenta-yrityksille)
+    - [Korrelaatioiden Laskenta ja Tulosten Yhdistäminen](#korrelaatioiden-laskenta-ja-tulosten-yhdistäminen)
+    - [Tilastot Teknologioille ja Toimialoille](#tilastot-teknologioille-ja-toimialoille)
+    - [Lopullisten Tulosten Tallentaminen](#lopullisten-tulosten-tallentaminen)
+    - [Tulosten Tulostaminen ja Muotoilu](#tulosten-tulostaminen-ja-muotoilu)
+- [Modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä)
+  - [AI-vertailu: Regex-työmäärän tarkastelu](#ai-vertailu-regex-työmäärän-tarkastelu)
+    - [Tavallinen tapa](#tavallinen-tapa)
+    - [Tekoälyversio](#tekoälyversio)
+    - [Vertailu regex-työmäärästä](#vertailu-regex-työmäärästä)
+      - [Perinteinen versio](#perinteinen-versio)
+      - [Tekoälyversio](#tekoälyversio-1)
+      - [Hybridiversio](#hybridiversio)
+    - [Teknisiä osuuksia](#teknisiä-osuuksia)
+- [Power BI](#power-bi)
+  - [Datan formatointi ja visualisointi](#datan-formatointi-ja-visualisointi)
 
 
 
