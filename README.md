@@ -128,12 +128,12 @@ department_summary = pd.DataFrame({
 
 </details>
 
-# Pisteytysjärjestelmän Kehitys
+## Pisteytysjärjestelmän Kehitys
 
-## Datan Pisteytys
+### Datan Pisteytys
 Kehitin pisteytysjärjestelmän, joka ottaa huomioon eri tekijöitä kontaktien ja yritysten laadun arvioimiseksi. Käytin vektorisoituja operaatioita tehokkuuden parantamiseksi.
 
-### Kontaktien Pisteytys
+#### Kontaktien Pisteytys
 ```python
 contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].str.contains(r'^\w\.$'))
 contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & contacts_df['Last_Name'].str.contains(r'^\w\.$')
@@ -155,7 +155,7 @@ contacts_df['Score'] = (
     contacts_df['Departments_Exists'] * 1
 )
 ```
-### Yritysten Pisteytys
+#### Yritysten Pisteytys
 ```python
 companies_df['Contact_Company_Match'] = companies_df.apply(
     lambda row: row['Company'] in contact_company_names.get(row['Apollo_Account_Id'], set()), axis=1
@@ -247,7 +247,7 @@ department_summary.to_csv('department_summary.csv', index=False)
 <details>
   <summary>Pisteiden statistiikat</summary>
 
-### Kontaktien pisteiden statistiikat:
+#### Kontaktien pisteiden statistiikat:
 - Lukumäärä: 29,426
 - Keskiarvo: 7.90
 - Keskihajonta: 0.84
@@ -257,7 +257,7 @@ department_summary.to_csv('department_summary.csv', index=False)
 - 75. prosenttipiste (Q3): 8.00
 - Maksimi: 9.00
 
-### Yritysten pisteiden statistiikat:
+#### Yritysten pisteiden statistiikat:
 - Lukumäärä: 32,675
 - Keskiarvo: 4.20
 - Keskihajonta: 2.31
@@ -267,12 +267,12 @@ department_summary.to_csv('department_summary.csv', index=False)
 - 75. prosenttipiste (Q3): 6.50
 - Maksimi: 8.00
 
-### Kontaktien pisteiden jakauma:
+#### Kontaktien pisteiden jakauma:
 Histogrammi näyttää kontaktipisteiden esiintymistiheyden. Useimmilla kontakteilla on pisteet välillä 7 ja 9, mikä osoittaa, että suurimmalla osalla merkinnöistä on melko täydelliset tiedot.
 
 ![Kontaktien pisteiden jakauma](https://github.com/Mauno934/Tyonayte/blob/main/output%20(3).png?raw=true)
 
-### Yritysten pisteiden jakauma:
+#### Yritysten pisteiden jakauma:
 Histogrammi näyttää yrityspisteiden esiintymistiheyden. Pisteet ovat laajemmin jakautuneet, ja huomattava määrä yrityksiä saa alhaisemmat pisteet, mikä osoittaa, että näiden merkintöjen tiedot ovat puutteellisia. Kuitenkin 
 puutteellisuus on verrattuna ideaaliseen dataan, ja on riippuvainen datan käyttötarkoituksesta tai esimerkiksi siitä onko paikka jossa data on välimuoto jollekin prosessille. 
 
@@ -284,7 +284,7 @@ Nämä kaaviot kuvaavat visuaalisesti datan laatua ja täydellisyyttä, korostae
 
 Tämä projekti analysoi, miten eri teknologiat ja toimialat vaikuttavat yritysten liikevaihtoon. Analyysin tulokset on koottu ja visualisoitu Power BI:llä. Tässä ovat analyysin vaiheet ja tulokset.
 
-## Datasetin Lataaminen ja Esikäsittely
+### Datasetin Lataaminen ja Esikäsittely
 
 Lataa yritysten tiedot ja suodata ne, joilla on vuotuinen liikevaihto.
 
@@ -300,7 +300,7 @@ companies_df = pd.read_csv("data.csv")
 # Suodata yritykset, joilla on vuotuinen liikevaihto
 companies_with_revenue_df = companies_df[companies_df['Annual_Revenue'].notna()].copy()
 ```
-### Teknologioiden Erottelu ja Lähtötietojen Valmistelu
+#### Teknologioiden Erottelu ja Lähtötietojen Valmistelu
 
 ```python
 # Erittele teknologiat yksittäisiksi kohteiksi
@@ -313,7 +313,7 @@ technology_presence_df = pd.get_dummies(all_technologies, prefix='', prefix_sep=
 # Tasoita sarakkeet varmistaaksesi, että kaikki ainutlaatuiset teknologiat ovat läsnä
 technology_presence_df = technology_presence_df.reindex(columns=unique_technologies, fill_value=0)
 ```
-### Teknologioiden Lukumäärän Laskenta Yrityksille
+#### Teknologioiden Lukumäärän Laskenta Yrityksille
 
 ```python
 # Laske teknologioiden lukumäärä kullekin yritykselle
@@ -323,7 +323,7 @@ companies_with_revenue_df['Technology_Count'] = technology_presence_df.sum(axis=
 final_df = companies_with_revenue_df[['CompanyID', 'Annual_Revenue', 'Industry', 'Technology_Count', 'Lists']].copy()
 final_df = pd.concat([final_df.reset_index(drop=True), technology_presence_df], axis=1)
 ```
-### Korrelaatioiden Laskenta ja Tulosten Yhdistäminen
+#### Korrelaatioiden Laskenta ja Tulosten Yhdistäminen
 ```python
 # Varmistetaan, että kaikki unique_technologies -elementit ovat final_df -DataFramessa
 final_tech_columns = set(final_df.columns)
@@ -359,7 +359,7 @@ final_df.loc[:, 'Industry_Ranking'] = final_df['Industry'].map(industry_ranking)
 for tech in unique_technologies_in_final_df:
     final_df.loc[:, tech] *= technology_scores[unique_technologies_in_final_df.index(tech)]
 ```
-### Tilastot Teknologioille ja Toimialoille
+#### Tilastot Teknologioille ja Toimialoille
 ```python
 # Laske keskimääräinen, maksimi-, minimi- ja mediaaniliikevaihto jokaiselle teknologialle
 technology_stats = final_df.melt(id_vars=['Annual_Revenue'], value_vars=unique_technologies_in_final_df, var_name='Technology', value_name='Presence')
@@ -368,7 +368,7 @@ technology_stats = technology_stats[technology_stats['Presence'] > 0].groupby('T
 # Laske keskimääräinen, maksimi-, minimi- ja mediaaniliikevaihto jokaiselle toimialalle
 industry_stats = final_df.groupby('Industry')['Annual_Revenue'].agg(['mean', 'max', 'min', 'median', 'count'])
 ```
-### Lopullisten Tulosten Tallentaminen
+#### Lopullisten Tulosten Tallentaminen
 ```python
 # Valitse ja järjestä vaaditut sarakkeet
 final_df = final_df[['CompanyID', 'Annual_Revenue', 'Tech_Correlation_with_revenue', 'Industry_Correlation_with_revenue', 
@@ -395,7 +395,7 @@ industry_correlation_df.rename(columns={'mean': 'Keskiarvo_liikevaihto', 'max': 
 # Tallenna teollisuuskorrelaatiotulokset CSV-tiedostoon
 industry_correlation_df.to_csv('industry_revenue_correlation.csv', index=False)
 ```
-### Tulosten Tulostaminen ja Muotoilu
+#### Tulosten Tulostaminen ja Muotoilu
 ```python
 # Käännä lukemat suomeksi ja muotoile lukuarvot
 correlation_with_revenue_df.columns = ['Teknologia', 'Korrelaatio_liikevaihtoon', 'Keskiarvo_liikevaihto', 'LiikevaihtoMAX', 'LiikevaihtoMIN', 'LiikevaihtoMedian', 'N']
@@ -420,7 +420,7 @@ print(industry_correlation_df)
 <details>
     <summary>Lambda-funktioiden selitykset:</summary>
 
-### Keskiarvo_liikevaihto:
+#### Keskiarvo_liikevaihto:
 
 ```python
 correlation_with_revenue_df['Keskiarvo_liikevaihto'] = correlation_with_revenue_df['Keskiarvo_liikevaihto'].apply(lambda x: f"{x:,.0f}")
@@ -429,23 +429,21 @@ Tämä lambda-funktio muotoilee sarakkeen 'Keskiarvo_liikevaihto' arvot tuhatero
 
 
 
-### LiikevaihtoMAX:
+#### LiikevaihtoMAX:
 
 ```python
 correlation_with_revenue_df['LiikevaihtoMAX'] = correlation_with_revenue_df['LiikevaihtoMAX'].apply(lambda x: f"{x:,.0f}")
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMAX' arvot samalla tavalla, käyttäen tuhaterotinpilkkuja ja poistamalla desimaalit.
 
-### LiikevaihtoMIN:
-
-
+#### LiikevaihtoMIN:
 
 ```python
 correlation_with_revenue_df['LiikevaihtoMIN'] = correlation_with_revenue_df['LiikevaihtoMIN'].apply(lambda x: f"{x:,.0f}")
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMIN' arvot kuten edellä, parantaen luettavuutta.
 
-### LiikevaihtoMedian:
+#### LiikevaihtoMedian:
 
 
 
@@ -454,7 +452,7 @@ correlation_with_revenue_df['LiikevaihtoMedian'] = correlation_with_revenue_df['
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMedian' arvot tuhaterotinpilkuilla ja ilman desimaaleja.
 
-### Keskiarvo_liikevaihto (Toimialat):
+#### Keskiarvo_liikevaihto (Toimialat):
 
 
 
@@ -463,7 +461,7 @@ industry_correlation_df['Keskiarvo_liikevaihto'] = industry_correlation_df['Kesk
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'Keskiarvo_liikevaihto' arvot tuhaterotinpilkuilla ja ilman desimaaleja, toimialakohtaisesti.
 
-### LiikevaihtoMAX (Toimialat):
+#### LiikevaihtoMAX (Toimialat):
 
 
 
@@ -472,7 +470,7 @@ industry_correlation_df['LiikevaihtoMAX'] = industry_correlation_df['Liikevaihto
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMAX' arvot samalla tavalla, toimialakohtaisesti.
 
-### LiikevaihtoMIN (Toimialat):
+#### LiikevaihtoMIN (Toimialat):
 
 
 
@@ -481,7 +479,7 @@ industry_correlation_df['LiikevaihtoMIN'] = industry_correlation_df['Liikevaihto
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMIN' arvot kuten edellä, toimialakohtaisesti.
 
-### LiikevaihtoMedian (Toimialat):
+#### LiikevaihtoMedian (Toimialat):
 
 
 
@@ -490,9 +488,7 @@ industry_correlation_df['LiikevaihtoMedian'] = industry_correlation_df['Liikevai
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMedian' arvot tuhaterotinpilkuilla ja ilman desimaaleja, toimialakohtaisesti.
 
-### Technology_General_Valence:
-
-
+#### Technology_General_Valence:
 
 ```python
 final_df.loc[:, 'Technology_General_Valence'] = final_df['Lists'].apply(lambda x: len(str(x).split(','))) + technology_median_score
@@ -505,7 +501,7 @@ Tämä lambda-funktio laskee sarakkeen 'Technology_General_Valence' arvot laskem
 ## AI-vertailu: Regex-työmäärän tarkastelu
 Tässä vertailussa otamme käytännön toteutuksen OpenAI API:sta yhdistettynä Bing search API:iin. Skriptit ovat tehtyjä tutkimustarkoitukseen ja käyttävät snippettejä bing hausta eivätkä mene sivuille itsessään. 
 
-### Tavallinen tapa
+#### Tavallinen tapa
 ```python
 regex_patterns = [
     r"liikevaihto oli ([\d\s,]+(\.\d{1,2})? [a-zA-Z]+)",  # Original regex
@@ -525,7 +521,7 @@ Tästä löytyy jo jonkinverran regexiä, ja kun ottaa huomioon esimerkiksi tila
 Jos myös verrataan tilanteeseen jossa AI valitsee oikean ehdokkaan ja tekee arvion sekä luo listan tiedoista, listan järjestyksen vastaus ei tekoälyn luonteesta johtuen aina ole oikea, mutta pienellä määrällä Regex funktioita
 pystytään asia korjaamaan. 
 
-### Tekoälyversio
+#### Tekoälyversio
 
 ```python
 # Jäsennä taloudellinen tieto
@@ -558,9 +554,9 @@ def parse_financial_info(financial_info):
 
 
 
-## Vertailu regex-työmäärästä:
+### Vertailu regex-työmäärästä:
 
-### LiikevaihtoSkripti:
+#### LiikevaihtoSkripti:
 - Sisältää yhteensä 11 regex-kuviota, jotka on suunniteltu tunnistamaan erilaisia liikevaihtoon liittyviä ilmaisuja.
 - Vertailussa voi tulla potentiaalisesti monia erilaisia ilmaisutapoja sekä samoilla sivuilla niin myöskin eri sivuilla
 - Regex-kuviot ovat monimutkaisempia ja kattavat useita erilaisia tapoja ilmaista liikevaihto, kuten tuhannet eurot, miljoonat eurot, ja liikevaihdon muutos.
@@ -568,18 +564,18 @@ def parse_financial_info(financial_info):
 - Skripti tällaisenaan tuskin kattaa mitenkään hyvin käyttötarkoitusta
 - Edullisempi
 
-### Tekoäly:
+#### Tekoäly:
 - Ainoastaan datan esikäsittelyyn sekä oikeellisuuden tarkastamiseen tarvittavia regex lauseita.
 - Melko vakaa formaatti joka kehittyy mallien kehittyessä
 - Käyttötarkoitusta ja analyysia helpompi laajentaa
 - Kalliimpi
 
-### Hybridiversio:
+#### Hybridiversio:
 - Etuna on kontekstin tehokkaampi rajaus, ja api kutsut vähenevät OpenAI:lle.
 - Laaduntakaaminen ratkaisussa, kustannusten hallinta. 
 
 
-## Teknisiä osuuksia
+### Teknisiä osuuksia
 
 Tekoälyn käyttö oikean datan valinnassa mahdollistaa sen että laittaa loogisia parametrejä, joita tekoäly voi käyttää tietona sekä itse tekoälyn päättelykyvyn
 
@@ -751,7 +747,7 @@ ymmärrykseen esimerkiksi asiakkaan tarpeista, mahdollisista parhaista asiakkais
 
 # Power BI
 
-## Datan formatointi ja visualisointi
+### Datan formatointi ja visualisointi
 
 Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laajoja osuuksia csv muodossa. Ratkaisu ei ollut elegantein mahdollinen mutta opin käyttämään ohjelmaa mielestäni melko hyvin lyhyessä ajassa. Kuitenkin huomatessani DAX-kaavojen rajoitukset, päätin esikäsitellä dataa pythonilla. Aiemmin tuotokset tekoälyratkaisua mukaan lukematta ovat suunnattu nimenomaan dataksi Power BI:seen. Jotkut ovat vieläkin liian isoja tai huonosti muotoiltuja
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
