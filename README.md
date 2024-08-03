@@ -120,4 +120,51 @@ department_summary.to_csv('department_summary.csv', index=False)
 
 </details>
 
+# Pisteytysjärjestelmän Kehitys
 
+## Datan Pisteytys
+Kehitin pisteytysjärjestelmän, joka ottaa huomioon eri tekijöitä kontaktien ja yritysten laadun arvioimiseksi. Käytin vektorisoituja operaatioita tehokkuuden parantamiseksi.
+
+### Kontaktien Pisteytys
+```python
+contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].str.contains(r'^\w\.$'))
+contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & contacts_df['Last_Name'].str.contains(r'^\w\.$')
+contacts_df['Has_Proper_Title'] = contacts_df['Title'].notna() & (~contacts_df['Title'].str.contains(r'\bat\b|\b/\b'))
+contacts_df['Company_Match'] = contacts_df['Apollo_Account_Id'].map(company_name_mapping) == contacts_df['Company']
+contacts_df['Email_Verified'] = contacts_df['Email_Status'] == 'Verified'
+contacts_df['Seniority_Exists'] = contacts_df['Seniority'].notna()
+contacts_df['Departments_Exists'] = contacts_df['Departments'].notna()
+
+contacts_df['Score'] = (
+    contacts_df['Has_Proper_Name'] * 2 +
+    contacts_df['Has_Abbreviated_Name'] * 1 +
+    contacts_df['Has_Proper_Title'] * 2 +
+    contacts_df['Has_Separator_Title'] * 1 +
+    contacts_df['Company_Match'].fillna(False) * 2 +
+    (~contacts_df['Company_Match'].fillna(True)) & contacts_df['Company'].notna() * 1 +
+    contacts_df['Email_Verified'] * 1 +
+    contacts_df['Seniority_Exists'] * 1 +
+    contacts_df['Departments_Exists'] * 1
+)
+```
+### Yritysten Pisteytys
+```python
+companies_df['Contact_Company_Match'] = companies_df.apply(
+    lambda row: row['Company'] in contact_company_names.get(row['Apollo_Account_Id'], set()), axis=1
+).astype(bool)
+companies_df['Employees_Valid'] = companies_df['Number_of_Employees'].notna() & (companies_df['Number_of_Employees'] > 3)
+companies_df['Industry_Exists'] = companies_df['Industry'].notna()
+social_media_fields = ['Website', 'Company_Linkedin_Url', 'Facebook_Url', 'Twitter_Url']
+companies_df['Social_Media_Count'] = companies_df[social_media_fields].notna().sum(axis=1)
+location_fields = ['Company_Country', 'Company_City']
+companies_df['Location_Count'] = companies_df[location_fields].notna().sum(axis=1)
+
+companies_df['Score'] = (
+    companies_df['Contact_Company_Match'].fillna(False) * 2 +
+    (~companies_df['Contact_Company_Match'].fillna(True)) & companies_df['Company'].notna() * 1 +
+    companies_df['Employees_Valid'] * 2 +
+    companies_df['Industry_Exists'] * 1 +
+    companies_df['Social_Media_Count'] * 0.5 +
+    companies_df['Location_Count'] * 0.5
+)
+```
