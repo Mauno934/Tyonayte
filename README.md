@@ -875,8 +875,9 @@ Tämä dashboard näyttää erikoiselta koska siinä on mitattu erilaisia asioit
 joka on näistä riippuvainen. Ennustimen tulokset ovat hieman erikoisia (tietysti näyteotos on myös ilmeisen pieni, ja random sattui myös poimimaan lithium akkuteknologian kaikista mahdollisuuksista...)
 ![Dashboard](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20172210.png?raw=true)
 <details>
-  <summary>Python koodi</summary>
-```python
+  <summary>Korrelaatiovertailu pythonilla</summary>
+
+  ```python
   
 import pandas as pd
 import numpy as np
@@ -943,6 +944,132 @@ plt.grid(True)
 plt.tight_layout()
 plt.show()
 ```
+<details>
+    <summary>DAX koodi</summary>
+  
+  ```dax 
+ContactsWithMatchingID = 
+CALCULATE(
+COUNTROWS(Contacts),
+Contacts[HasMatchingCompany] = 1
+)
+TotalContacts = COUNTROWS(Contacts)
+```
+</details>
+
+<details>
+    <summary>Datan pisteitys pythonilla</summary>
+    
+  ```python
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Ladataan datasetit
+contacts_df = pd.read_csv(data.csv")
+companies_df = pd.read_csv("data.csv")
+
+# Esilasketaan tarvittavat mappingit
+company_name_mapping = companies_df.set_index('Account_Id')['Company'].to_dict()
+
+# Vektorisoitu pisteytys kontakteille
+contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].fillna('').str.contains(r'^\w\.$'))
+contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & contacts_df['Last_Name'].fillna('').str.contains(r'^\w\.$')
+
+contacts_df['Has_Proper_Title'] = contacts_df['Title'].notna() & (~contacts_df['Title'].fillna('').str.contains(r'\bat\b|\b/\b'))
+contacts_df['Has_Separator_Title'] = contacts_df['Title'].notna() & contacts_df['Title'].fillna('').str.contains(r'\bat\b|\b/\b')
+
+contacts_df['Company_Match'] = contacts_df['Account_Id'].map(company_name_mapping) == contacts_df['Company']
+
+contacts_df['Email_Verified'] = contacts_df['Email_Status'] == 'Verified'
+contacts_df['Seniority_Exists'] = contacts_df['Seniority'].notna()
+contacts_df['Departments_Exists'] = contacts_df['Departments'].notna()
+
+contacts_df['Score'] = (
+    contacts_df['Has_Proper_Name'] * 2 +
+    contacts_df['Has_Abbreviated_Name'] * 1 +
+    contacts_df['Has_Proper_Title'] * 2 +
+    contacts_df['Has_Separator_Title'] * 1 +
+    contacts_df['Company_Match'].fillna(False).astype(int) * 2 +
+    ((~contacts_df['Company_Match'].fillna(True)).astype(int) & contacts_df['Company'].notna().astype(int)) * 1 +
+    contacts_df['Email_Verified'].astype(int) * 1 +
+    contacts_df['Seniority_Exists'].astype(int) * 1 +
+    contacts_df['Departments_Exists'].astype(int) * 1
+)
+
+# Vektorisoitu pisteytys yrityksille
+contact_company_names = contacts_df.groupby('Account_Id')['Company'].apply(set).to_dict()
+
+companies_df['Contact_Company_Match'] = companies_df.apply(
+    lambda row: row['Company'] in contact_company_names.get(row['Account_Id'], set()), axis=1
+).astype(bool)
+companies_df['Employees_Valid'] = companies_df['Number_of_Employees'].notna() & (companies_df['Number_of_Employees'] > 3)
+companies_df['Industry_Exists'] = companies_df['Industry'].notna()
+social_media_fields = ['Website', 'Company_Linkedin_Url', 'Facebook_Url', 'Twitter_Url']
+companies_df['Social_Media_Count'] = companies_df[social_media_fields].notna().sum(axis=1)
+location_fields = ['Company_Country', 'Company_City']
+companies_df['Location_Count'] = companies_df[location_fields].notna().sum(axis=1)
+
+# Lasketaan kokonaispisteet
+companies_df['Score'] = (
+    companies_df['Contact_Company_Match'].fillna(False).astype(int) * 2 +
+    ((~companies_df['Contact_Company_Match'].fillna(True)).astype(int) & companies_df['Company'].notna().astype(int)) * 1 +
+    companies_df['Employees_Valid'].astype(int) * 2 +
+    companies_df['Industry_Exists'].astype(int) * 1 +
+    companies_df['Social_Media_Count'] * 0.5 +
+    companies_df['Location_Count'] * 0.5
+)
+
+# Näytetään tilastot pisteistä
+contacts_score_stats = contacts_df['Score'].describe()
+companies_score_stats = companies_df['Score'].describe()
+
+print("Kontaktien pisteiden tilastot:")
+print(contacts_score_stats)
+print("\nYritysten pisteiden tilastot:")
+print(companies_score_stats)
+
+# Yhdistetään pisteet ja tallennetaan tulokset
+combined_scores_df = pd.concat([contacts_df[['Account_Id', 'Score']], companies_df[['Account_Id', 'Score', 'Industry']]], axis=0)
+combined_scores_df.to_csv('combined_scores.csv', index=False)
+
+# Muutetaan kategorinen 'Industry' sarake numeeriseksi koodeiksi
+combined_scores_df['Industry_Code'] = combined_scores_df['Industry'].astype('category').cat.codes
+
+# Funktio korrelaatiomatriisin laskemiseen valituille sarakkeille
+def calculate_correlation_matrix(df, columns):
+    correlation_matrix = df[columns].corr()
+    return correlation_matrix
+
+# Määritä sarakkeet korrelaatiota varten (voit muokata tätä listaa tarpeen mukaan)
+columns_for_correlation = ['Score', 'Industry_Code']  # Lisää tai poista sarakkeita tarpeen mukaan
+
+# Lasketaan korrelaatiomatriisi
+correlation_matrix = calculate_correlation_matrix(combined_scores_df, columns_for_correlation)
+
+# Muutetaan korrelaatiomatriisi pitkään muotoon Power BI:tä varten
+correlation_long_format = correlation_matrix.unstack().reset_index()
+correlation_long_format.columns = ['Variable1', 'Variable2', 'Correlation']
+
+# Tallennetaan korrelaatiomatriisi CSV-tiedostoon
+correlation_long_format.to_csv('correlation_matrix.csv', index=False)
+
+# Tulostetaan korrelaatiomatriisi
+print("Korrelaatiomatriisi (pitkä muoto):")
+print(correlation_long_format)
+
+# Valinnainen: Piirretään korrelaatiomatriisi visualisointia varten
+plt.figure(figsize=(8, 6))
+plt.matshow(correlation_matrix, cmap='coolwarm', fignum=1)
+plt.xticks(range(len(correlation_matrix.columns)), correlation_matrix.columns, rotation=45)
+plt.yticks(range(len(correlation_matrix.columns)), correlation_matrix.columns)
+plt.colorbar()
+plt.title('Korrelaatiomatriisi', pad=20)
+plt.show()
+```
+
+</details>
+
 
 
 
