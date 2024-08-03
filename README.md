@@ -755,7 +755,8 @@ Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja
 Aiemmin esittelin kahden kokoista datasamplea osastoista, Top 10 osastoa esiintyvyydeltä sekä Top 10 Osastoa pelkästään yli tuhannen henkilön yrityksissä. Toin näistä tiedostot Power BI työpöytäsovellukseen ja aloin luoda graafista esitystä. Loin Clustered Bar Chartin jossa osastot näkyvät Y-akselilla ja eri arvot X akselilla, siistin taulukkoa monella eri tavalla ja kokeilin eri asioita. 
 Toteutusta varten käytin <details> 
                             <summary>DAX-kieltä</summary>
-                            CombinedTable = 
+```dax
+CombinedTable = 
 UNION(
     SELECTCOLUMNS(
         Top_10_Departments_Counts,
@@ -806,5 +807,6 @@ UNION(
         "NormalValueMerged", [NormalValue2]
     )
 )
+```
 </details>
 
