@@ -557,7 +557,7 @@ def parse_financial_info(financial_info):
 
 ### Vertailu regex-työmäärästä:
 
-#### LiikevaihtoSkripti:
+#### Perinteinen versio:
 - Sisältää yhteensä 11 regex-kuviota, jotka on suunniteltu tunnistamaan erilaisia liikevaihtoon liittyviä ilmaisuja.
 - Vertailussa voi tulla potentiaalisesti monia erilaisia ilmaisutapoja sekä samoilla sivuilla niin myöskin eri sivuilla
 - Regex-kuviot ovat monimutkaisempia ja kattavat useita erilaisia tapoja ilmaista liikevaihto, kuten tuhannet eurot, miljoonat eurot, ja liikevaihdon muutos.
@@ -565,7 +565,7 @@ def parse_financial_info(financial_info):
 - Skripti tällaisenaan tuskin kattaa mitenkään hyvin käyttötarkoitusta
 - Edullisempi
 
-#### Tekoäly:
+#### Tekoälyversio:
 - Ainoastaan datan esikäsittelyyn sekä oikeellisuuden tarkastamiseen tarvittavia regex lauseita.
 - Melko vakaa formaatti joka kehittyy mallien kehittyessä
 - Käyttötarkoitusta ja analyysia helpompi laajentaa
