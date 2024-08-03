@@ -10,6 +10,12 @@ Tässä työnäytteessä esittelen Pythonilla ja Power BI:llä tekemiäni datan 
 
 
 
+
+
+
+
+
+
 ### Osastojen Analyysi Pythonilla
 
 #### Datan Esikäsittely
