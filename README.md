@@ -10,9 +10,9 @@ Tässä työnäytteessä esittelen Pythonilla ja Power BI:llä tekemiäni datan 
 
 
 
-## Osastojen Analyysi Pythonilla
+### Osastojen Analyysi Pythonilla
 
-### Datan Esikäsittely
+#### Datan Esikäsittely
 
 Huomasin että Power BI pystyy moniin operaatioihin mutta on parasta luoda sille hyviä sampleja valmiiksi pythonilla jossa dataoperaatiot luistavat sulavasti. 
 Aloitin mahdollisimman yksinkertaisesta mallista johon sitten lisäsin Power BI ymmärryksen kasvaessa monimutkaisuutta ja resoluutiota.
