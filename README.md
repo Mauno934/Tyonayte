@@ -261,13 +261,13 @@ department_summary.to_csv('department_summary.csv', index=False)
 ### Kontaktien pisteiden jakauma:
 Histogrammi näyttää kontaktipisteiden esiintymistiheyden. Useimmilla kontakteilla on pisteet välillä 7 ja 9, mikä osoittaa, että suurimmalla osalla merkinnöistä on melko täydelliset tiedot.
 
-![Kontaktien pisteiden jakauma](mnt/data/output%20(3).png)
+![Kontaktien pisteiden jakauma](https://github.com/Mauno934/Tyonayte/blob/main/output%20(3).png?raw=true)
 
 ### Yritysten pisteiden jakauma:
 Histogrammi näyttää yrityspisteiden esiintymistiheyden. Pisteet ovat laajemmin jakautuneet, ja huomattava määrä yrityksiä saa alhaisemmat pisteet, mikä osoittaa, että näiden merkintöjen tiedot ovat puutteellisia. Kuitenkin 
 puutteellisuus on verrattuna ideaaliseen dataan, ja on riippuvainen datan käyttötarkoituksesta tai esimerkiksi siitä onko paikka jossa data on välimuoto jollekin prosessille. 
 
-![Yritysten pisteiden jakauma](mnt/data/output%20(2).png)
+![Yritysten pisteiden jakauma](https://github.com/Mauno934/Tyonayte/blob/main/output%20(2).png?raw=true)
 
 Nämä kaaviot kuvaavat visuaalisesti datan laatua ja täydellisyyttä, korostaen alueita, joilla voidaan tehdä parannuksia. Myöskin kuvaavat preferenssejä datan rikastuksessa. 
 </details>
