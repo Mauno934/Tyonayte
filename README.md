@@ -32,71 +32,7 @@ department_summary = pd.DataFrame({
     'Count': department_counts.values
 })
 
-<details>
-  <summary>Koko skripti</summary>
 
-```python
-import numpy as np
-
-# Esilaskenta tarvittaville mapituksille
-company_name_mapping = companies_df.set_index('Apollo_Account_Id')['Company'].to_dict()
-
-# Vektorisoitu pisteytys kontakteille
-contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].str.contains(r'^\w\.$'))
-contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & contacts_df['Last_Name'].str.contains(r'^\w\.$')
-
-contacts_df['Has_Proper_Title'] = contacts_df['Title'].notna() & (~contacts_df['Title'].str.contains(r'\bat\b|\b/\b'))
-contacts_df['Has_Separator_Title'] = contacts_df['Title'].notna() & contacts_df['Title'].str.contains(r'\bat\b|\b/\b')
-
-contacts_df['Company_Match'] = contacts_df['Apollo_Account_Id'].map(company_name_mapping) == contacts_df['Company']
-
-contacts_df['Email_Verified'] = contacts_df['Email_Status'] == 'Verified'
-contacts_df['Seniority_Exists'] = contacts_df['Seniority'].notna()
-contacts_df['Departments_Exists'] = contacts_df['Departments'].notna()
-
-contacts_df['Score'] = (
-    contacts_df['Has_Proper_Name'] * 2 +
-    contacts_df['Has_Abbreviated_Name'] * 1 +
-    contacts_df['Has_Proper_Title'] * 2 +
-    contacts_df['Has_Separator_Title'] * 1 +
-    contacts_df['Company_Match'].fillna(False).astype(int) * 2 +
-    (~contacts_df['Company_Match'].fillna(True)).astype(int) & contacts_df['Company'].notna().astype(int) * 1 +
-    contacts_df['Email_Verified'].astype(int) * 1 +
-    contacts_df['Seniority_Exists'].astype(int) * 1 +
-    contacts_df['Departments_Exists'].astype(int) * 1
-)
-
-# Vektorisoitu pisteytys yrityksille
-contact_company_names = contacts_df.groupby('Apollo_Account_Id')['Company'].apply(set).to_dict()
-
-companies_df['Contact_Company_Match'] = companies_df.apply(
-    lambda row: row['Company'] in contact_company_names.get(row['Apollo_Account_Id'], set()), axis=1
-).astype(bool)
-companies_df['Employees_Valid'] = companies_df['Number_of_Employees'].notna() & (companies_df['Number_of_Employees'] > 3)
-companies_df['Industry_Exists'] = companies_df['Industry'].notna()
-social_media_fields = ['Website', 'Company_Linkedin_Url', 'Facebook_Url', 'Twitter_Url']
-companies_df['Social_Media_Count'] = companies_df[social_media_fields].notna().sum(axis=1)
-location_fields = ['Company_Country', 'Company_City']
-companies_df['Location_Count'] = companies_df[location_fields].notna().sum(axis=1)
-
-# Lasketaan kokonaispistemäärä
-companies_df['Score'] = (
-    companies_df['Contact_Company_Match'].fillna(False).astype(int) * 2 +
-    ((~companies_df['Contact_Company_Match'].fillna(True)).astype(int) & companies_df['Company'].notna().astype(int)) * 1 +
-    companies_df['Employees_Valid'].astype(int) * 2 +
-    companies_df['Industry_Exists'].astype(int) * 1 +
-    companies_df['Social_Media_Count'] * 0.5 +
-    companies_df['Location_Count'] * 0.5
-)
-
-# Näytetään tilastot pisteistä
-contacts_score_stats = contacts_df['Score'].describe()
-companies_score_stats = companies_df['Score'].describe()
-
-contacts_score_stats, companies_score_stats
-</details>
-
-department_summary.to_csv('department_summary.csv', index=False)
 ```
 <details>
   <summary>Osastojen edustus:</summary>
@@ -231,4 +167,71 @@ companies_df['Score'] = (
     companies_df['Social_Media_Count'] * 0.5 +
     companies_df['Location_Count'] * 0.5
 )
+```
+<details>
+  <summary>Koko skripti</summary>
+
+```python
+import numpy as np
+
+# Esilaskenta tarvittaville mapituksille
+company_name_mapping = companies_df.set_index('Apollo_Account_Id')['Company'].to_dict()
+
+# Vektorisoitu pisteytys kontakteille
+contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].str.contains(r'^\w\.$'))
+contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & contacts_df['Last_Name'].str.contains(r'^\w\.$')
+
+contacts_df['Has_Proper_Title'] = contacts_df['Title'].notna() & (~contacts_df['Title'].str.contains(r'\bat\b|\b/\b'))
+contacts_df['Has_Separator_Title'] = contacts_df['Title'].notna() & contacts_df['Title'].str.contains(r'\bat\b|\b/\b')
+
+contacts_df['Company_Match'] = contacts_df['Apollo_Account_Id'].map(company_name_mapping) == contacts_df['Company']
+
+contacts_df['Email_Verified'] = contacts_df['Email_Status'] == 'Verified'
+contacts_df['Seniority_Exists'] = contacts_df['Seniority'].notna()
+contacts_df['Departments_Exists'] = contacts_df['Departments'].notna()
+
+contacts_df['Score'] = (
+    contacts_df['Has_Proper_Name'] * 2 +
+    contacts_df['Has_Abbreviated_Name'] * 1 +
+    contacts_df['Has_Proper_Title'] * 2 +
+    contacts_df['Has_Separator_Title'] * 1 +
+    contacts_df['Company_Match'].fillna(False).astype(int) * 2 +
+    (~contacts_df['Company_Match'].fillna(True)).astype(int) & contacts_df['Company'].notna().astype(int) * 1 +
+    contacts_df['Email_Verified'].astype(int) * 1 +
+    contacts_df['Seniority_Exists'].astype(int) * 1 +
+    contacts_df['Departments_Exists'].astype(int) * 1
+)
+
+# Vektorisoitu pisteytys yrityksille
+contact_company_names = contacts_df.groupby('Apollo_Account_Id')['Company'].apply(set).to_dict()
+
+companies_df['Contact_Company_Match'] = companies_df.apply(
+    lambda row: row['Company'] in contact_company_names.get(row['Apollo_Account_Id'], set()), axis=1
+).astype(bool)
+companies_df['Employees_Valid'] = companies_df['Number_of_Employees'].notna() & (companies_df['Number_of_Employees'] > 3)
+companies_df['Industry_Exists'] = companies_df['Industry'].notna()
+social_media_fields = ['Website', 'Company_Linkedin_Url', 'Facebook_Url', 'Twitter_Url']
+companies_df['Social_Media_Count'] = companies_df[social_media_fields].notna().sum(axis=1)
+location_fields = ['Company_Country', 'Company_City']
+companies_df['Location_Count'] = companies_df[location_fields].notna().sum(axis=1)
+
+# Lasketaan kokonaispistemäärä
+companies_df['Score'] = (
+    companies_df['Contact_Company_Match'].fillna(False).astype(int) * 2 +
+    ((~companies_df['Contact_Company_Match'].fillna(True)).astype(int) & companies_df['Company'].notna().astype(int)) * 1 +
+    companies_df['Employees_Valid'].astype(int) * 2 +
+    companies_df['Industry_Exists'].astype(int) * 1 +
+    companies_df['Social_Media_Count'] * 0.5 +
+    companies_df['Location_Count'] * 0.5
+)
+
+# Näytetään tilastot pisteistä
+contacts_score_stats = contacts_df['Score'].describe()
+companies_score_stats = companies_df['Score'].describe()
+
+contacts_score_stats, companies_score_stats
+</details>
+
+department_summary.to_csv('department_summary.csv', index=False)
+</details>
 ```
