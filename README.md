@@ -753,8 +753,7 @@ Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja
 
 
 Aiemmin esittelin kahden kokoista datasamplea osastoista, Top 10 osastoa esiintyvyydeltä sekä Top 10 Osastoa pelkästään yli tuhannen henkilön yrityksissä. Toin näistä tiedostot Power BI työpöytäsovellukseen ja aloin luoda graafista esitystä. Loin Clustered Bar Chartin jossa osastot näkyvät Y-akselilla ja eri arvot X akselilla, siistin taulukkoa monella eri tavalla ja kokeilin eri asioita. 
-Toteutusta varten käytin <details> 
-                            <summary>DAX-kieltä</summary>
+Toteutusta varten käytin DAX-kieltä luodakseni yhdistetyn taulukon yhdistääkseni osastot ja myös testatakseni Power BI kykyä luoda normaalijakauma ilman lisäosia tai Python visualizeria. 
 ```dax
 CombinedTable = 
 UNION(
@@ -808,5 +807,16 @@ UNION(
     )
 )
 ```
-</details>
+Normaalijakauma onnistui lopulta, vaikka ei ole tässä esimerkissä kuvaavin, niin pääsin oppimaan paljon Power BI:n käytöstä.
+
+Yksi normaalijakauma yksillä osastoarvoilla
+![Screenshot 2024-08-02 233408](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-02%20233408.png?raw=true)
+
+Kaksi rinnakkaista normaalijakaumaa molemmilla osastoarvoilla
+![Screenshot 2024-08-03 003855](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20003855.png?raw=true)
+
+![Screenshot 2024-08-03 004703](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20004703.png?raw=true)
+
+
+
 
