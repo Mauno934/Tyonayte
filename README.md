@@ -280,9 +280,10 @@ puutteellisuus on verrattuna ideaaliseen dataan, ja on riippuvainen datan käytt
 
 Nämä kaaviot kuvaavat visuaalisesti datan laatua ja täydellisyyttä, korostaen alueita, joilla voidaan tehdä parannuksia. Myöskin kuvaavat preferenssejä datan rikastuksessa. 
 </details>
-# Analyysi: Teknologioiden ja Toimialojen Vaikutus Liikevaihtoon
 
-Tämä projekti analysoi, miten eri teknologiat ja toimialat vaikuttavat yritysten liikevaihtoon. Analyysin tulokset on koottu ja visualisoitu Power BI:llä. Tässä ovat analyysin vaiheet ja tulokset.
+## Analyysi: Teknologioiden ja Toimialojen Korrelaatio Liikevaihtoon
+
+Tämä projekti analysoi, miten eri teknologiat ja toimialat korreloivat yritysten liikevaihtoon.
 
 ### Datasetin Lataaminen ja Esikäsittely
 
