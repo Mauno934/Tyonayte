@@ -168,7 +168,7 @@ Kehitin pisteytysjärjestelmän, joka ottaa huomioon eri tekijöitä kontaktien 
 contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].str.contains(r'^\w\.$'))
 contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & contacts_df['Last_Name'].str.contains(r'^\w\.$')
 contacts_df['Has_Proper_Title'] = contacts_df['Title'].notna() & (~contacts_df['Title'].str.contains(r'\bat\b|\b/\b'))
-contacts_df['Company_Match'] = contacts_df['Apollo_Account_Id'].map(company_name_mapping) == contacts_df['Company']
+contacts_df['Company_Match'] = contacts_df['Account_Id'].map(company_name_mapping) == contacts_df['Company']
 contacts_df['Email_Verified'] = contacts_df['Email_Status'] == 'Verified'
 contacts_df['Seniority_Exists'] = contacts_df['Seniority'].notna()
 contacts_df['Departments_Exists'] = contacts_df['Departments'].notna()
@@ -188,7 +188,7 @@ contacts_df['Score'] = (
 #### Yritysten Pisteytys
 ```python
 companies_df['Contact_Company_Match'] = companies_df.apply(
-    lambda row: row['Company'] in contact_company_names.get(row['Apollo_Account_Id'], set()), axis=1
+    lambda row: row['Company'] in contact_company_names.get(row['Account_Id'], set()), axis=1
 ).astype(bool)
 companies_df['Employees_Valid'] = companies_df['Number_of_Employees'].notna() & (companies_df['Number_of_Employees'] > 3)
 companies_df['Industry_Exists'] = companies_df['Industry'].notna()
@@ -213,7 +213,7 @@ companies_df['Score'] = (
 import numpy as np
 
 # Esilaskenta tarvittaville mapituksille
-company_name_mapping = companies_df.set_index('Apollo_Account_Id')['Company'].to_dict()
+company_name_mapping = companies_df.set_index('Account_Id')['Company'].to_dict()
 
 # Vektorisoitu pisteytys kontakteille
 contacts_df['Has_Proper_Name'] = contacts_df['First_Name'].notna() & contacts_df['Last_Name'].notna() & (~contacts_df['Last_Name'].str.contains(r'^\w\.$'))
@@ -222,7 +222,7 @@ contacts_df['Has_Abbreviated_Name'] = contacts_df['First_Name'].notna() & contac
 contacts_df['Has_Proper_Title'] = contacts_df['Title'].notna() & (~contacts_df['Title'].str.contains(r'\bat\b|\b/\b'))
 contacts_df['Has_Separator_Title'] = contacts_df['Title'].notna() & contacts_df['Title'].str.contains(r'\bat\b|\b/\b')
 
-contacts_df['Company_Match'] = contacts_df['Apollo_Account_Id'].map(company_name_mapping) == contacts_df['Company']
+contacts_df['Company_Match'] = contacts_df['Account_Id'].map(company_name_mapping) == contacts_df['Company']
 
 contacts_df['Email_Verified'] = contacts_df['Email_Status'] == 'Verified'
 contacts_df['Seniority_Exists'] = contacts_df['Seniority'].notna()
@@ -241,10 +241,10 @@ contacts_df['Score'] = (
 )
 
 # Vektorisoitu pisteytys yrityksille
-contact_company_names = contacts_df.groupby('Apollo_Account_Id')['Company'].apply(set).to_dict()
+contact_company_names = contacts_df.groupby('Account_Id')['Company'].apply(set).to_dict()
 
 companies_df['Contact_Company_Match'] = companies_df.apply(
-    lambda row: row['Company'] in contact_company_names.get(row['Apollo_Account_Id'], set()), axis=1
+    lambda row: row['Company'] in contact_company_names.get(row['Account_Id'], set()), axis=1
 ).astype(bool)
 companies_df['Employees_Valid'] = companies_df['Number_of_Employees'].notna() & (companies_df['Number_of_Employees'] > 3)
 companies_df['Industry_Exists'] = companies_df['Industry'].notna()
@@ -869,6 +869,86 @@ Kaksi rinnakkaista normaalijakaumaa molemmilla osastoarvoilla
 ![Screenshot 2024-08-03 003855](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20003855.png?raw=true)
 
 ![Screenshot 2024-08-03 004703](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20004703.png?raw=true)
+
+### Datakoherenssi dashboard sekä liikevaihdon korrelaatio teknologiaan
+Tämä dashboard näyttää erikoiselta koska siinä on mitattu erilaisia asioita joidenka yhteyttä ei välttämättä heti näe. Ideana on tarkistaa linketetyn datan määrä sekä datapisteiden laadullisuus. Samalla on pienempi ennustin
+joka on näistä riippuvainen. Ennustimen tulokset ovat hieman erikoisia (tietysti näyteotos on myös ilmeisen pieni, ja random sattui myös poimimaan lithium akkuteknologian kaikista mahdollisuuksista...)
+![Dashboard](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20172210.png?raw=true)
+<details>
+  <summary>Python koodi</summary>
+```python
+  
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Ladataan datasetit
+companies_df = pd.read_csv("data.csv")  # Korvaa tämä polulla omaan Companies CSV-tiedostoon
+
+# Suodatetaan yritykset, joilla on vuosiliikevaihto saatavilla
+companies_with_revenue_df = companies_df[companies_df['Annual_Revenue'].notna()]
+
+# Pilkotaan teknologiat 15 yleisimpään ja valitaan 15 satunnaista
+all_technologies = companies_with_revenue_df['Technologies'].str.split(',', expand=True).stack()
+top_15_technologies = all_technologies.value_counts().head(15).index.tolist()
+remaining_technologies = all_technologies.value_counts().tail(len(all_technologies.unique()) - 15)
+random_15_technologies = remaining_technologies.sample(15, random_state=42).index.tolist()
+
+# Luodaan DataFrame teknologiakohtaiselle läsnäololle
+technology_columns = top_15_technologies + random_15_technologies
+for tech in technology_columns:
+    companies_with_revenue_df[tech] = companies_with_revenue_df['Technologies'].apply(lambda x: tech in str(x).split(','))
+
+# Valitaan vain tarvittavat sarakkeet CSV-tiedostoa varten
+power_bi_ready_df = companies_with_revenue_df[['Account_Id', 'Company', 'Annual_Revenue'] + technology_columns]
+
+# Tallennetaan Power BI -valmis DataFrame CSV-tiedostoon
+power_bi_ready_df.to_csv('power_bi_ready_technology_revenue.csv', index=False)
+
+# Lasketaan korrelaatio kunkin teknologian läsnäolon ja vuosiliikevaihdon välillä
+correlation_with_revenue = power_bi_ready_df[technology_columns + ['Annual_Revenue']].corr()['Annual_Revenue'].drop('Annual_Revenue')
+
+# Jaetaan korrelaatiot top 15 ja satunnaiseen 15
+correlation_top_15 = correlation_with_revenue.loc[top_15_technologies]
+correlation_random_15 = correlation_with_revenue.loc[random_15_technologies]
+
+# Tallennetaan korrelaatiotulokset CSV-tiedostoon
+correlation_with_revenue.to_csv('technology_revenue_correlation.csv', header=['Correlation_with_Revenue'])
+
+# Tulostetaan korrelaatiotulokset
+print("Korrelaatio Top 15 Teknologioiden ja Vuosiliikevaihdon välillä:")
+print(correlation_top_15)
+print("\nKorrelaatio Satunnaisen 15 Teknologian ja Vuosiliikevaihdon välillä:")
+print(correlation_random_15)
+
+# Yhdistetään tulokset vertailua varten
+comparison_df = pd.DataFrame({
+    'Technology': top_15_technologies + random_15_technologies,
+    'Correlation_with_Revenue': list(correlation_top_15) + list(correlation_random_15),
+    'Type': ['Top 15'] * len(correlation_top_15) + ['Random 15'] * len(correlation_random_15)
+})
+
+# Tallennetaan yhdistetyt vertailutulokset CSV-tiedostoon
+comparison_df.to_csv('technology_revenue_comparison.csv', index=False)
+
+# Piirretään vertailu
+plt.figure(figsize=(12, 8))
+comparison_df.set_index('Technology')['Correlation_with_Revenue'].plot(kind='bar', color=['blue' if x == 'Top 15' else 'orange' for x in comparison_df['Type']])
+plt.title('Korrelaatio Teknologioiden ja Vuosiliikevaihdon Välillä')
+plt.xlabel('Teknologia')
+plt.ylabel('Korrelaatio Vuosiliikevaihdon kanssa')
+plt.xticks(rotation=90)
+plt.legend(['Top 15', 'Satunnainen 15'])
+plt.grid(True)
+plt.tight_layout()
+plt.show()
+```
+
+
+
+
+
+
 
 
 
