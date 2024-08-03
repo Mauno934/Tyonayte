@@ -3,7 +3,7 @@
 Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille työnäytteen jossa näkyy jo olemassa olevia taitoja sekä tehtyä työtä. En halunnut jakaa dataa sellaisena että
 siinä olisi mitään kyseenalaista tietoturvan tai muun kannalta, joka koski myös erilaisia sarakkeita sekä lähteitä. Nykyisessä työpaikassa visualisointi ei ole ollut prioriteetti joten tästä tuli mielenkiintoinen kokeilu. 
 Sisällytin kuitenkin myös paljon omaa koodia tähän jotka loin aikapitkälti lennosta, tai yhdistämällä joitain aiemmin luotuja komponentteja. 
-Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä että on ollut vain muutama päivä aikaa, koodini ei vastaa asynkronoitua ja monesti refakturoitua koodia. 
+Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä että on ollut vain muutama päivä aikaa, koodini ei vastaa asynkronoitua ja monesti refakturoitua koodia. Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös Power BI osuuteen - [Power BI](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti.
 
 
 Tässä työnäytteessä esittelen Pythonilla ja Power BI:llä tekemiäni datan käsittely- ja visualisointitehtäviä. Työssä käytin olemassa olevia taitojani ja kehitin uusia, erityisesti datan analysoinnissa ja visualisoinnissa. Tämä dokumentti sisältää esimerkkejä Python-koodista ja Power BI -visualisoinneista, sekä pienen osuuden tekoälystä.
