@@ -233,8 +233,9 @@ contacts_score_stats, companies_score_stats
 </details>
 
 department_summary.to_csv('department_summary.csv', index=False)
-</details>
 ```
+</details>
+
 <details>
   <summary>Pisteiden statistiikat</summary>
 
