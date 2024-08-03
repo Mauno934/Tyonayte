@@ -749,8 +749,62 @@ Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laa
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
 omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään Digialla sekä valmis tekemään paljon työtä sinne pääsemisen eteen. 
 
-Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen (esimerkiksi normaalijakauman luomisessa yhdistettyyn tauluun). Työni on katsottavissa linkistä: https://mauno934.github.io/Tyonayte/
+Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa linkistä: https://mauno934.github.io/Tyonayte/ mutta teknisiä näytteitä sieltä ei erityisemmin löydy. 
 
 
-
+Aiemmin esittelin kahden kokoista datasamplea osastoista, Top 10 osastoa esiintyvyydeltä sekä Top 10 Osastoa pelkästään yli tuhannen henkilön yrityksissä. Toin näistä tiedostot Power BI työpöytäsovellukseen ja aloin luoda graafista esitystä. Loin Clustered Bar Chartin jossa osastot näkyvät Y-akselilla ja eri arvot X akselilla, siistin taulukkoa monella eri tavalla ja kokeilin eri asioita. 
+Toteutusta varten käytin <details> 
+                            <summary>DAX-kieltä</summary>
+                            CombinedTable = 
+UNION(
+    SELECTCOLUMNS(
+        Top_10_Departments_Counts,
+        "Department1", Top_10_Departments_Counts[Department],
+        "Department2", BLANK(),
+        "DepartmentMerged", Top_10_Departments_Counts[Department],
+        "Value", Top_10_Departments_Counts[Count],
+        "Count1", Top_10_Departments_Counts[Count],
+        "Count2", BLANK(),
+        "NormalValue1", BLANK(),
+        "NormalValue2", BLANK(),
+        "NormalValueMerged", BLANK()
+    ),
+    SELECTCOLUMNS(
+        NormalDistributionTable1,
+        "Department1", BLANK(),
+        "Department2", BLANK(),
+        "DepartmentMerged", BLANK(),
+        "Value", [Value],
+        "Count1", BLANK(),
+        "Count2", BLANK(),
+        "NormalValue1", [NormalValue],
+        "NormalValue2", BLANK(),
+        "NormalValueMerged", [NormalValue]
+    ),
+    SELECTCOLUMNS(
+        Top_10_Departments_Counts___1000_Employees_,
+        "Department1", BLANK(),
+        "Department2", Top_10_Departments_Counts___1000_Employees_[Department],
+        "DepartmentMerged", Top_10_Departments_Counts___1000_Employees_[Department],
+        "Value", Top_10_Departments_Counts___1000_Employees_[Count],
+        "Count1", BLANK(),
+        "Count2", Top_10_Departments_Counts___1000_Employees_[Count],
+        "NormalValue1", BLANK(),
+        "NormalValue2", BLANK(),
+        "NormalValueMerged", BLANK()
+    ),
+    SELECTCOLUMNS(
+        NormalDistributionTable2,
+        "Department1", BLANK(),
+        "Department2", BLANK(),
+        "DepartmentMerged", BLANK(),
+        "Value", [Value],
+        "Count1", BLANK(),
+        "Count2", BLANK(),
+        "NormalValue1", BLANK(),
+        "NormalValue2", [NormalValue2],
+        "NormalValueMerged", [NormalValue2]
+    )
+)
+</details>
 
