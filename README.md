@@ -784,7 +784,7 @@ ymmärrykseen esimerkiksi asiakkaan tarpeista, mahdollisista parhaista asiakkais
 
 ### Datan formatointi ja visualisointi
 
-Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laajoja osuuksia csv muodossa. Ratkaisu ei ollut elegantein mahdollinen mutta opin käyttämään ohjelmaa mielestäni melko hyvin lyhyessä ajassa. Kuitenkin huomatessani DAX-kaavojen rajoitukset, päätin esikäsitellä dataa pythonilla. Aiemmin tuotokset tekoälyratkaisua mukaan lukematta ovat suunnattu nimenomaan dataksi Power BI:seen. Jotkut ovat vieläkin liian isoja tai huonosti muotoiltuja
+Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laajoja osuuksia csv muodossa. Ratkaisu ei ollut elegantein mahdollinen mutta opin käyttämään ohjelmaa mielestäni melko hyvin lyhyessä ajassa. Kuitenkin huomatessani DAX-kaavojen rajoitukset, päätin esikäsitellä dataa pythonilla. Aiemmin tuotokset tekoälyratkaisua mukaan lukematta ovat suunnattu nimenomaan dataksi Power BI:hin. Jotkut ovat vieläkin liian isoja tai huonosti muotoiltuja
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
 omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään Digialla sekä valmis tekemään paljon työtä sinne pääsemisen eteen. 
 
