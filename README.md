@@ -869,7 +869,7 @@ Normaalijakauma onnistui lopulta, vaikka ei ole tässä esimerkissä kuvaavin, n
 Yksi normaalijakauma yksillä osastoarvoilla
 ![Screenshot 2024-08-02 233408](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-02%20233408.png?raw=true)
 
-Kaksi rinnakkaista normaalijakaumaa molemmilla osastoarvoilla
+Kaksi rinnakkaista normaalijakaumaa sekä yhdistetty normaalijakauma molemmilla osastoarvoilla
 ![Screenshot 2024-08-03 003855](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20003855.png?raw=true)
 
 ![Screenshot 2024-08-03 004703](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-03%20004703.png?raw=true)
