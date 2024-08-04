@@ -527,6 +527,16 @@ Tämä lambda-funktio laskee sarakkeen 'Technology_General_Valence' arvot laskem
 </details>
 
 # Modernit tietokantaratkaisut tekoälyllä
+Kaikki haluavat tekoälyratkaisuja, ja nopeasti. Netissä on tulva promptengineeringiä joissa optimoidaan prompteja, kaikkia tehtäviä tehdään tekoälyllä aina analyyseistä sisältöteksteihin asti. 
+Jos oppii visuaalisoimaan oman mielenrakenteita suhteessa tilaan jossa tekoäly toimii tulee kuitenkin selväksi konstekstin putkimaisuus, ihmiset juuttuvat paradigmoihin ja täytyy syntyä oivallus että paradigma kääntyy.
+Promptit yrittävät korjata ongelmaa antamalla kontekstin sekä hahmon jossa tekoäly toimii joustavammin. Kuitenkin usein käy niin esimerkiksi ChatGPT:n kanssa että tekoälyn luomiskyky heikkenee hakatessa samoja asioita
+ja täytyy joko menettää järkensä tai avata kokonaan uusi istunto ja yrittää tuoda sinne riittävän avoin konteksti mutta ei kuitenkaan ympäripyöreä. 
+
+Voisiko sen sijaan promptata niin että tekoälylle tuo joustavia teorioita sekä täsmentäviä parametreja? Konteksti luotaisiin joustavaksi eikä tuomituksi istunnossa luotuihin paradigmoihin?
+Esimerkiksi OpenAI API on hieman erilainen kun sitä voi ajaa Pythonin kontekstissa, lähettäen uusia kyselyitä per sarake. Riittävän hyvät tiedot, kontekstin rajaavat parametrit (oli ne lukemia tai laadullisia) ja toimiva
+teoria voisivat viedä tekoälyn toiselle tasolle. Tuollaisessa kokonaisvaltaisessa mallissa promptengineering on vain kuorrute kakun päällä.
+
+Nyt ei kuitenkaan mennä laajempiin teorioihin, osuutta saatan testata työnäytteen lopussa jos vain jää aikaa. Käydään läpi yleinen tekotapa: Regex ja esimerkkejä kuinka kielimalleihin pohjautuva tekoäly voisi muuttaa perinteistä tekotapaa.
 
 ## AI-vertailu: Regex-työmäärän tarkastelu
 Tässä vertailussa otamme käytännön toteutuksen OpenAI API:sta yhdistettynä Bing search API:iin. Skriptit ovat tehtyjä tutkimustarkoitukseen ja käyttävät snippettejä bing hausta eivätkä mene sivuille itsessään. 
