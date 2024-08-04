@@ -532,15 +532,7 @@ Tämä lambda-funktio laskee sarakkeen 'Technology_General_Valence' arvot laskem
 </details>
 
 # Modernit tietokantaratkaisut tekoälyllä
-Kaikki haluavat tekoälyratkaisuja, ja nopeasti. Netissä on tulva promptengineeringiä joissa optimoidaan prompteja, kaikkia tehtäviä tehdään tekoälyllä aina analyyseistä sisältöteksteihin asti. 
-Jos oppii visuaalisoimaan oman mielenrakenteita suhteessa tilaan jossa tekoäly toimii tulee kuitenkin selväksi konstekstin putkimaisuus, ihmiset juuttuvat paradigmoihin ja täytyy syntyä oivallus että paradigma kääntyy.
-Promptit yrittävät korjata ongelmaa antamalla kontekstin sekä hahmon jossa tekoäly toimii joustavammin. Kuitenkin usein käy niin esimerkiksi ChatGPT:n kanssa että tekoälyn luomiskyky heikkenee hakatessa samoja asioita ja täytyy joko menettää järkensä tai avata kokonaan uusi istunto ja yrittää tuoda sinne riittävän avoin konteksti mutta ei kuitenkaan ympäripyöreä. 
-
-Voisiko sen sijaan promptata niin että tekoälylle tuo joustavia teorioita sekä täsmentäviä parametreja? Konteksti luotaisiin joustavaksi eikä tuomituksi istunnossa luotuihin paradigmoihin?
-Esimerkiksi OpenAI API on hieman erilainen kun sitä voi ajaa Pythonin kontekstissa, lähettäen uusia kyselyitä per sarake. Riittävän hyvät tiedot, kontekstin rajaavat parametrit (oli ne lukemia tai laadullisia) ja toimiva
-sekä toimiva teoria voisivat viedä tekoälyn toiselle tasolle. Tuollaisessa kokonaisvaltaisessa mallissa promptengineering on vain kuorrute kakun päällä.
-
-Nyt ei kuitenkaan mennä laajempiin teorioihin, osuutta saatan testata työnäytteen lopussa jos vain jää aikaa. Käydään läpi yleinen tekotapa: Regex ja esimerkkejä kuinka kielimalleihin pohjautuva tekoäly voisi muuttaa perinteistä tekotapaa. Tässä skriptissä on yhdistetty OpenAI API sekä Azuren Bing Search API V2 joka pystyy käymään läpi hakutuloksien snippettejä silmukassa joita se voi purkaa, analysoida, muotoilla ja avustuksella tuoda taulukon lohkoihin. 
+Tekoäly tuo uusia mahdollisuuksia teknologisille toteutuksille, erityisesti tietokannoissa. Tarkastellaan säännöllisten lausekkeiden määrän ja tarpeen muutoksia esimerkkiskriptissä.
 
 
 ## Ai-vertailu: regex-työmäärän tarkastelu
