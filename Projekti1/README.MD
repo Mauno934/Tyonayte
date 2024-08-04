@@ -1,4 +1,4 @@
-# Työnäyte, Python / SQL / Power BI / AI 
+# Työnäyte, python / sql / power bi / ai 
 
 Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille työnäytteen jossa näkyy jo olemassa olevia taitoja sekä tehtyä työtä. En halunnut jakaa dataa sellaisena että
 siinä olisi mitään kyseenalaista tietoturvan tai muun kannalta, joka koski myös erilaisia sarakkeita sekä lähteitä. Nykyisessä työpaikassa visualisointi ei ole ollut prioriteetti joten tästä tuli mielenkiintoinen kokeilu. 
@@ -158,7 +158,7 @@ department_summary = pd.DataFrame({
 
 </details>
 
-## Pisteytysjärjestelmän Kehitys
+## Pisteytysjärjestelmän kehitys
 
 ### Datan pisteytys
 Kehitin pisteytysjärjestelmän, joka ottaa huomioon eri tekijöitä kontaktien ja yritysten laadun arvioimiseksi. Käytin vektorisoituja operaatioita tehokkuuden parantamiseksi.
@@ -311,7 +311,7 @@ puutteellisuus on verrattuna ideaaliseen dataan, ja on riippuvainen datan käytt
 Nämä kaaviot kuvaavat visuaalisesti datan laatua ja täydellisyyttä, korostaen alueita, joilla voidaan tehdä parannuksia. Myöskin kuvaavat preferenssejä datan rikastuksessa. 
 </details>
 
-## Analyysi: Teknologioiden ja Toimialojen Korrelaatio Liikevaihtoon
+## Analyysi: teknologioiden ja toimialojen korrelaatio liikevaihtoon
 
 Tämä projekti analysoi, miten eri teknologiat ja toimialat korreloivat yritysten liikevaihtoon.
 
@@ -331,7 +331,7 @@ companies_df = pd.read_csv("data.csv")
 # Suodata yritykset, joilla on vuotuinen liikevaihto
 companies_with_revenue_df = companies_df[companies_df['Annual_Revenue'].notna()].copy()
 ```
-#### Teknologioiden erottelu ja Lähtötietojen Valmistelu
+#### Teknologioiden erottelu ja lähtötietojen valmistelu
 
 ```python
 # Erittele teknologiat yksittäisiksi kohteiksi
@@ -344,7 +344,7 @@ technology_presence_df = pd.get_dummies(all_technologies, prefix='', prefix_sep=
 # Tasoita sarakkeet varmistaaksesi, että kaikki ainutlaatuiset teknologiat ovat läsnä
 technology_presence_df = technology_presence_df.reindex(columns=unique_technologies, fill_value=0)
 ```
-#### Teknologioiden lukumäärän Laskenta Yrityksille
+#### Teknologioiden lukumäärän laskenta yrityksille
 
 ```python
 # Laske teknologioiden lukumäärä kullekin yritykselle
@@ -356,7 +356,7 @@ final_df = pd.concat([final_df.reset_index(drop=True), technology_presence_df], 
 ```
 #### Korrelaatioiden laskenta ja tulosten yhdistäminen
 ```python
-# Varmistetaan, että kaikki unique_technologies -elementit ovat final_df -DataFramessa
+# Varmistetaan, että kaikki unique_technologies -elementit ovat final_df -dataframessa
 final_tech_columns = set(final_df.columns)
 unique_technologies_in_final_df = [tech for tech in unique_technologies if tech in final_tech_columns]
 
@@ -374,11 +374,11 @@ industry_ranking = industry_correlation_corr.rank(ascending=False).to_dict()
 # Arvota teknologiat niiden liikevaihtokorrelaation mukaan käyttäen normaalijakaumaa
 technology_scores = norm.cdf(correlation_with_revenue)
 
-# Laske technology_General_Valence-pisteet
+# Laske technology_general_valence-pisteet
 technology_median_score = np.median(technology_scores)
 final_df.loc[:, 'Technology_General_Valence'] = final_df['Lists'].apply(lambda x: len(str(x).split(','))) + technology_median_score
 
-# Laske tech_Correlation_with_revenue vektorisoiduilla operaatioilla
+# Laske tech_correlation_with_revenue vektorisoiduilla operaatioilla
 tech_corr_matrix = final_df[unique_technologies_in_final_df].values * correlation_with_revenue.values
 final_df.loc[:, 'Tech_Correlation_with_revenue'] = tech_corr_matrix.sum(axis=1)
 
@@ -405,7 +405,7 @@ industry_stats = final_df.groupby('Industry')['Annual_Revenue'].agg(['mean', 'ma
 final_df = final_df[['CompanyID', 'Annual_Revenue', 'Tech_Correlation_with_revenue', 'Industry_Correlation_with_revenue', 
                      'Technology_Count', 'Industry_Ranking', 'Technology_General_Valence'] + unique_technologies_in_final_df]
 
-# Tallenna lopullinen dataframe csv-tiedostoon Power BI -analyysiä varten
+# Tallenna lopullinen dataframe csv-tiedostoon power bi -analyysiä varten
 final_df.to_csv('companies_technology_industry_scoring.csv', index=False)
 
 # Valmistele korrelaatiotulokset dataframe tilastojen kanssa
@@ -483,7 +483,7 @@ correlation_with_revenue_df['LiikevaihtoMedian'] = correlation_with_revenue_df['
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMedian' arvot tuhaterotinpilkuilla ja ilman desimaaleja.
 
-#### Keskiarvo_liikevaihto (Toimialat):
+#### Keskiarvo_liikevaihto (toimialat):
 
 
 
@@ -492,7 +492,7 @@ industry_correlation_df['Keskiarvo_liikevaihto'] = industry_correlation_df['Kesk
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'Keskiarvo_liikevaihto' arvot tuhaterotinpilkuilla ja ilman desimaaleja, toimialakohtaisesti.
 
-#### Liikevaihtomax (Toimialat):
+#### Liikevaihtomax (toimialat):
 
 
 
@@ -501,7 +501,7 @@ industry_correlation_df['LiikevaihtoMAX'] = industry_correlation_df['Liikevaihto
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMAX' arvot samalla tavalla, toimialakohtaisesti.
 
-#### Liikevaihtomin (Toimialat):
+#### Liikevaihtomin (toimialat):
 
 
 
@@ -510,7 +510,7 @@ industry_correlation_df['LiikevaihtoMIN'] = industry_correlation_df['Liikevaihto
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMIN' arvot kuten edellä, toimialakohtaisesti.
 
-#### Liikevaihtomedian (Toimialat):
+#### Liikevaihtomedian (toimialat):
 
 
 
@@ -519,7 +519,7 @@ industry_correlation_df['LiikevaihtoMedian'] = industry_correlation_df['Liikevai
 ```
 Tämä lambda-funktio muotoilee sarakkeen 'LiikevaihtoMedian' arvot tuhaterotinpilkuilla ja ilman desimaaleja, toimialakohtaisesti.
 
-#### Technology_General_Valence:
+#### Technology_general_valence:
 
 ```python
 final_df.loc[:, 'Technology_General_Valence'] = final_df['Lists'].apply(lambda x: len(str(x).split(','))) + technology_median_score
@@ -539,7 +539,7 @@ teoria voisivat viedä tekoälyn toiselle tasolle. Tuollaisessa kokonaisvaltaise
 
 Nyt ei kuitenkaan mennä laajempiin teorioihin, osuutta saatan testata työnäytteen lopussa jos vain jää aikaa. Käydään läpi yleinen tekotapa: Regex ja esimerkkejä kuinka kielimalleihin pohjautuva tekoäly voisi muuttaa perinteistä tekotapaa.
 
-## Ai-vertailu: Regex-työmäärän tarkastelu
+## Ai-vertailu: regex-työmäärän tarkastelu
 Tässä vertailussa otamme käytännön toteutuksen OpenAI API:sta yhdistettynä Bing search API:iin. Skriptit ovat tehtyjä tutkimustarkoitukseen ja käyttävät snippettejä bing hausta eivätkä mene sivuille itsessään. 
 
 #### Tavallinen tapa
@@ -588,7 +588,7 @@ def parse_financial_info(financial_info):
         parsed_data["CEO"] = info_list[3].strip()
         parsed_data["Founding Year"] = info_list[4].strip()
     else:
-        # Jos pituus ei ole oikein tai järjestys, TODO: laitetaan regex sekä paremmat tunnistukset virheellisistä tiedoista
+        # Jos pituus ei ole oikein tai järjestys, todo: laitetaan regex sekä paremmat tunnistukset virheellisistä tiedoista
         print("Warning: Incomplete financial information received.")
         
     return parsed_data
@@ -915,7 +915,7 @@ for tech in technology_columns:
 # Valitaan vain tarvittavat sarakkeet csv-tiedostoa varten
 power_bi_ready_df = companies_with_revenue_df[['Account_Id', 'Company', 'Annual_Revenue'] + technology_columns]
 
-# Tallennetaan power bi -valmis DataFrame CSV-tiedostoon
+# Tallennetaan power bi -valmis dataframe csv-tiedostoon
 power_bi_ready_df.to_csv('power_bi_ready_technology_revenue.csv', index=False)
 
 # Lasketaan korrelaatio kunkin teknologian läsnäolon ja vuosiliikevaihdon välillä
@@ -1047,7 +1047,7 @@ print(companies_score_stats)
 combined_scores_df = pd.concat([contacts_df[['Account_Id', 'Score']], companies_df[['Account_Id', 'Score', 'Industry']]], axis=0)
 combined_scores_df.to_csv('combined_scores.csv', index=False)
 
-# Muutetaan kategorinen 'Industry' sarake numeeriseksi koodeiksi
+# Muutetaan kategorinen 'industry' sarake numeeriseksi koodeiksi
 combined_scores_df['Industry_Code'] = combined_scores_df['Industry'].astype('category').cat.codes
 
 # Funktio korrelaatiomatriisin laskemiseen valituille sarakkeille
@@ -1061,7 +1061,7 @@ columns_for_correlation = ['Score', 'Industry_Code']  # Lisää tai poista sarak
 # Lasketaan korrelaatiomatriisi
 correlation_matrix = calculate_correlation_matrix(combined_scores_df, columns_for_correlation)
 
-# Muutetaan korrelaatiomatriisi pitkään muotoon Power BI:tä varten
+# Muutetaan korrelaatiomatriisi pitkään muotoon power bi:tä varten
 correlation_long_format = correlation_matrix.unstack().reset_index()
 correlation_long_format.columns = ['Variable1', 'Variable2', 'Correlation']
 
@@ -1086,7 +1086,7 @@ plt.show()
 
 
 
-#### Visuaalinen muokkaus ja filtteröinti Power BI:ssä
+#### Visuaalinen muokkaus ja filtteröinti power bi:ssä
 
 Tein vielä pari kaavioita datasta ja harjoittelin muokkaamista ja filtteröintiä ehdollisilla säännöillä. Ensimmäisessä kuvassa on filtteröity top 25 käyttäen top N filtteröintiä ja toisessa on kaikki toimialat pisteiden keskiarvoineen laitettu piirakkakaavioon.
 
