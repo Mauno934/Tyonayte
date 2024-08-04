@@ -1,4 +1,4 @@
-# Työnäyte, python / sql / power bi / ai 
+# Työnäyte Senior Data Engineer rooliin
 
 Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille työnäytteen jossa näkyy jo olemassa olevia taitoja sekä tehtyä työtä. En halunnut jakaa dataa sellaisena että
 siinä olisi mitään kyseenalaista tietoturvan tai muun kannalta, joka koski myös erilaisia sarakkeita sekä lähteitä. Nykyisessä työpaikassa visualisointi ei ole ollut prioriteetti joten tästä tuli mielenkiintoinen kokeilu. 
@@ -9,8 +9,7 @@ Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä ett
 
 
 ## Sisällysluettelo
-- [Työnäyte, Python / SQL / Power BI / AI / Suorituskyky](#työnäyte-python--sql--power-bi--ai--suorituskyky)
-- [Python ja Power BI -työnäyte: Osastojen Analyysi, Pisteytysjärjestelmä ja IndustryMapping](#python-ja-power-bi--työnäyte-osastojen-analyysi-pisteytysjärjestelmä-ja-industrymapping)
+- [Python](#Python)
   - [Osastojen analyysi pythonilla](#osastojen-analyysi-pythonilla)
     - [Datan esikäsittely](#datan-esikäsittely)
   - [Pisteytysjärjestelmän kehitys](#pisteytysjärjestelmän-kehitys)
@@ -39,8 +38,8 @@ Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä ett
 
 
 
-
-
+#Python
+Ehdottomasti lempiohjelmointikieleni, dynaaminen ja nopea määrittely, tehokas. Aloitetaan esittelemällä Python kielen toteutuksia valmistaaksemme datasta visualisointeja.
 
 
 
