@@ -1,10 +1,15 @@
 # Työnäyte Python / AI / Power BI
 
-Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille työnäytteen jossa näkyy jo olemassa olevia taitoja sekä tehtyä työtä. En halunnut jakaa dataa sellaisena että
-siinä olisi mitään kyseenalaista tietoturvan tai muun kannalta, joka koski myös erilaisia sarakkeita sekä lähteitä. Nykyisessä työpaikassa visualisointi ei ole ollut prioriteetti joten tästä tuli mielenkiintoinen kokeilu. 
-Sisällytin kuitenkin myös paljon omaa koodia tähän jotka loin aikapitkälti lennosta, tai yhdistämällä joitain aiemmin luotuja komponentteja. 
-Koko homma on tehty melko dynaamiseksi ja kehittyväksi mutta johtuen siitä että on ollut vain muutama päivä aikaa, koodini ei vastaa asynkronoitua ja monesti refaktoroitua koodia. Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös Power BI osuuteen - [Power BI](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa - [Modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa.
+Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. En voi muutenkaan jakaa työtä vaan suoraan sillä se olisi tietosuojan kannalta erittäin huono asia.
+Visualisointi on uutta eikä sille ole niin ollut tarvetta nykyisessä työpaikassa, joten tämä on kokeiluna hyvin mielenkiintoinen ja opettava.
+Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin tietynlaisen samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
+jota ei haluattaisi jakaa. 
 
+Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niin tarkoitus on luoda nopeasti kuitenkin riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osilta myös näyttää siltä.
+
+Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös Power BI osuuteen - [Power BI](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa - [Modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa.
+
+Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua kehittymään monella osa-alueella. 
 
 
 
