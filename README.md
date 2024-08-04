@@ -552,6 +552,7 @@ Jos myös verrataan tilanteeseen jossa AI valitsee oikean ehdokkaan ja tekee arv
 pystytään asia korjaamaan. 
 
 #### Tekoälyversio
+Määritellään sarakkeet
 
 ```python
 # Jäsennä taloudellinen tieto
@@ -583,29 +584,6 @@ def parse_financial_info(financial_info):
 ```
 
 
-
-### Vertailu regex-työmäärästä:
-
-#### Perinteinen versio:
-- Sisältää yhteensä 11 regex-kuviota, jotka on suunniteltu tunnistamaan erilaisia liikevaihtoon liittyviä ilmaisuja.
-- Vertailussa voi tulla potentiaalisesti monia erilaisia ilmaisutapoja sekä samoilla sivuilla niin myöskin eri sivuilla
-- Regex-kuviot ovat monimutkaisempia ja kattavat useita erilaisia tapoja ilmaista liikevaihto, kuten tuhannet eurot, miljoonat eurot, ja liikevaihdon muutos.
-- Regex-työmäärä on huomattavasti suurempi, koska se käsittelee useita eri muotoisia ja monimutkaisia liikevaihtoon liittyviä lauseita.
-- Skripti tällaisenaan tuskin kattaa mitenkään hyvin käyttötarkoitusta
-- Edullisempi
-
-#### Tekoälyversio:
-- Ainoastaan datan esikäsittelyyn sekä oikeellisuuden tarkastamiseen tarvittavia regex lauseita.
-- Melko vakaa formaatti joka kehittyy mallien kehittyessä
-- Käyttötarkoitusta ja analyysia helpompi laajentaa
-- Kalliimpi
-
-#### Hybridiversio:
-- Etuna on kontekstin tehokkaampi rajaus, ja api kutsut vähenevät OpenAI:lle.
-- Laaduntakaaminen ratkaisussa, kustannusten hallinta. 
-
-
-### Teknisiä osuuksia
 
 Tekoälyn käyttö oikean datan valinnassa mahdollistaa sen että laittaa loogisia parametrejä, joita tekoäly voi käyttää tietona sekä itse tekoälyn päättelykyvyn
 
@@ -775,6 +753,25 @@ for result in results.get("webPages", {}).get("value", []):
 return best_info_with_data if best_info_with_data else (best_info_without_data if best_info_without_data else (fallback_info if fallback_info else (None, "", "")))
 
 ```
+### Vertailu regex-työmäärästä:
+
+#### Perinteinen versio:
+- Sisältää yhteensä 11 regex-kuviota, jotka on suunniteltu tunnistamaan erilaisia liikevaihtoon liittyviä ilmaisuja.
+- Vertailussa voi tulla potentiaalisesti monia erilaisia ilmaisutapoja sekä samoilla sivuilla niin myöskin eri sivuilla
+- Regex-kuviot ovat monimutkaisempia ja kattavat useita erilaisia tapoja ilmaista liikevaihto, kuten tuhannet eurot, miljoonat eurot, ja liikevaihdon muutos.
+- Regex-työmäärä on huomattavasti suurempi, koska se käsittelee useita eri muotoisia ja monimutkaisia liikevaihtoon liittyviä lauseita.
+- Skripti tällaisenaan tuskin kattaa mitenkään hyvin käyttötarkoitusta
+- Edullisempi
+
+#### Tekoälyversio:
+- Ainoastaan datan esikäsittelyyn sekä oikeellisuuden tarkastamiseen tarvittavia regex lauseita.
+- Melko vakaa formaatti joka kehittyy mallien kehittyessä
+- Käyttötarkoitusta ja analyysia helpompi laajentaa
+- Kalliimpi
+
+#### Hybridiversio:
+- Etuna on kontekstin tehokkaampi rajaus, ja api kutsut vähenevät OpenAI:lle.
+- Laaduntakaaminen ratkaisussa, kustannusten hallinta. 
 
 Nämä ovat vain esimerkkitoteutuksia yleisestä loogisesta ajattelusta mitä kuuluu tekoälyratkaisuihin, hyötyjen arviointiin suhteessa kustannukiin. Pitkään minua on myös innostanut idea jossa tekoäly pyrkisi syvällisempään
 ymmärrykseen esimerkiksi asiakkaan tarpeista, mahdollisista parhaista asiakkaista tai toimenpiteistä heidän nykyisessä tilanteessaan. 
