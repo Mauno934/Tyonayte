@@ -536,7 +536,8 @@ Voisiko sen sijaan promptata niin että tekoälylle tuo joustavia teorioita sek�
 Esimerkiksi OpenAI API on hieman erilainen kun sitä voi ajaa Pythonin kontekstissa, lähettäen uusia kyselyitä per sarake. Riittävän hyvät tiedot, kontekstin rajaavat parametrit (oli ne lukemia tai laadullisia) ja toimiva
 teoria voisivat viedä tekoälyn toiselle tasolle. Tuollaisessa kokonaisvaltaisessa mallissa promptengineering on vain kuorrute kakun päällä.
 
-Nyt ei kuitenkaan mennä laajempiin teorioihin, osuutta saatan testata työnäytteen lopussa jos vain jää aikaa. Käydään läpi yleinen tekotapa: Regex ja esimerkkejä kuinka kielimalleihin pohjautuva tekoäly voisi muuttaa perinteistä tekotapaa.
+Nyt ei kuitenkaan mennä laajempiin teorioihin, osuutta saatan testata työnäytteen lopussa jos vain jää aikaa. Käydään läpi yleinen tekotapa: Regex ja esimerkkejä kuinka kielimalleihin pohjautuva tekoäly voisi muuttaa perinteistä tekotapaa. Tässä skriptissä on yhdistetty OpenAI API sekä Azuren Bing Search API V2 joka pystyy käymään läpi hakutuloksien snippettejä silmukassa joita se voi purkaa, analysoida, muotoilla ja avustuksella tuoda taulukon lohkoihin. 
+
 
 ## Ai-vertailu: regex-työmäärän tarkastelu
 Tässä vertailussa otamme käytännön toteutuksen OpenAI API:sta yhdistettynä Bing search API:iin. Skriptit ovat tehtyjä tutkimustarkoitukseen ja käyttävät snippettejä bing hausta eivätkä mene sivuille itsessään. 
