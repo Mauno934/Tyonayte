@@ -1335,7 +1335,7 @@ def cohens_d(x, y):
     dof = nx + ny - 2
     pooled_std = np.sqrt(((nx - 1) * np.std(x, ddof=1) ** 2 + (ny - 1) * np.std(y, ddof=1) ** 2) / dof)
     if pooled_std == 0:
-        return np.nan  # Standard deviation is zero, can't calculate Cohen's d
+        return np.nan  # Keskihajonta 0, Cohen's d ei voida laskea
     return (np.mean(x) - np.mean(y)) / pooled_std
 
 # Suodata pois rivit, joissa toimiala on merkitty "0":ksi toimialaan liittyvää analyysiä varten
