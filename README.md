@@ -1453,14 +1453,24 @@ Datan käsittely mahdollisti monia asioita kuten vaikutuskokojen täsmällisemp�
 Jos pylväs on korkea, mutta se menee samanaikaisesti negatiiviselle puolelle, se tarkoittaa, että kyseisellä toimialalla on  negatiivisia Cohen's d -arvoja verrattuna muihin toimialoihin positiivisien lisäksi.
 Jos pylvään osa on positiivinen, se tarkoittaa, että ensisijainen toimiala (Industry_1) on menestyvämpi tai tuottoisampi verrattuna muihin toimialoihin (Industry_2). Värit pylväissä antaa käsityksen alojen määrästä
 
-[!Cohens1](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050536.png?raw=true)
+![Cohens1](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050536.png?raw=true)
 
 
 
 
 Toisessa esimerkissä teknologioiden määrien vaikutuskoot liikevaihtoon
 
-[!Cohens2](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050548.png?raw=true)
+![Cohens2](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050548.png?raw=true)
+
+
+
+Jos katsotaan koko populaatioon vertausta linjana, Cohen's d arvon antamaa efekti kokoa ei näy oikein ollenkaan
+
+![Cohens3](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050519.png?raw=true)
+
+
+
+
 
 
 Ja tässäpä on oikeastaan kaikki!
