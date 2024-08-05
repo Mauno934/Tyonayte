@@ -5,9 +5,9 @@ Visualisointi on uutta eikä sille ole niin ollut tarvetta nykyisessä työpaika
 Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin tietynlaisen samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
 jota ei haluattaisi jakaa. 
 
-Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niin tarkoitus on luoda nopeasti kuitenkin riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osilta myös näyttää siltä.
+Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niin tarkoitus on luoda nopeasti kuitenkin riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osin myös näyttää siltä.
 
-Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös Power BI osuuteen - [Power BI](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa - [Modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa.
+Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös [Power BI osuuteen](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa [modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa. Haastavimmat datan käsittelyt ja laskennat Pythonilla, sekä niiden visualisointi löytyvät ihan [lopusta](#monimutkainen-data-ja-lopullinen-työ).
 
 Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua kehittymään monella osa-alueella. 
 
@@ -40,6 +40,10 @@ Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua k
     - [Teknisiä osuuksia](#teknisiä-osuuksia)
 - [Power BI](#power-bi)
   - [Datan formatointi ja visualisointi](#datan-formatointi-ja-visualisointi)
+  - [Monimutkainen data ja lopullinen työ](#monimutkainen-data-ja-lopullinen-työ)
+
+
+
 
 
 
@@ -792,7 +796,7 @@ Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laa
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
 omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään Digialla sekä valmis tekemään paljon työtä sinne pääsemisen eteen. 
 
-Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa linkistä: https://mauno934.github.io/Tyonayte/ mutta tässä käyn läpi myös tuon.
+Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa tarkemmin upotettuna Power BI:nä linkistä: https://mauno934.github.io/Tyonayte/ mutta tässä käyn läpi suurimman osan noista ja myös enemmän joitain teknisia toteutuksia joita upotetussa näytteessä ei ole.
 
 
 Aiemmin esittelin kahden kokoista datasamplea osastoista, Top 10 osastoa esiintyvyydeltä sekä Top 10 Osastoa pelkästään yli tuhannen henkilön yrityksissä. Toin näistä tiedostot Power BI työpöytäsovellukseen ja aloin luoda graafista esitystä. Loin Clustered Bar Chartin jossa osastot näkyvät Y-akselilla ja eri arvot X akselilla, siistin taulukkoa monella eri tavalla ja kokeilin eri asioita. 
@@ -1331,7 +1335,7 @@ def cohens_d(x, y):
     dof = nx + ny - 2
     pooled_std = np.sqrt(((nx - 1) * np.std(x, ddof=1) ** 2 + (ny - 1) * np.std(y, ddof=1) ** 2) / dof)
     if pooled_std == 0:
-        return np.nan  # Standard deviation is zero, can't calculate Cohen's d
+        return np.nan  # Keskihajonta 0, Cohen's d ei voida laskea
     return (np.mean(x) - np.mean(y)) / pooled_std
 
 # Suodata pois rivit, joissa toimiala on merkitty "0":ksi toimialaan liittyvää analyysiä varten
@@ -1449,9 +1453,11 @@ print("Excel-työkirja 'analysis_results.xlsx' luotiin onnistuneesti.")
 ```
 </details>
 
-Datan käsittely mahdollisti monia asioita kuten vaikutuskokojen täsmällisempää ymmärtämistä, tässä kuvassa toimiala verrataan jokaista toista toimialaa vasten vertailukohteena liikevaihto. Cohen's d ilmaisee efektikokoa. 
-Jos pylväs on korkea, mutta se menee samanaikaisesti negatiiviselle puolelle, se tarkoittaa, että kyseisellä toimialalla on  negatiivisia Cohen's d -arvoja verrattuna muihin toimialoihin positiivisien lisäksi.
-Jos pylvään osa on positiivinen, se tarkoittaa, että ensisijainen toimiala (Industry_1) on menestyvämpi tai tuottoisampi verrattuna muihin toimialoihin (Industry_2). Värit pylväissä antaa käsityksen alojen määrästä
+Datan käsittely mahdollisti monia asioita kuten vaikutuskokojen täsmällisempää ymmärtämistä, tässä kuvassa toimiala verrataan jokaista toista toimialaa vasten vertailukohteena liikevaihto. Cohen's d ilmaisee efektikokoa. Se on hyvä mittaustapa määrittelemään todellisia vaikutuksia eri asioiden välillä ja tunnistamaan ilmiöitä joilla on nuanssia. 
+Jokainen pylväs on siis yhden toimialan kokonaiskuva, jossa on siis pareittain verrattu loput toimialoista ja otettu niiden suhteesta liikevaihtoon Cohen's d.
+Jos pylväs on korkea, mutta se menee samanaikaisesti negatiiviselle puolelle, se tarkoittaa, että kyseisellä toimialalla on negatiivisia Cohen's d -arvoja verrattuna muihin toimialoihin positiivisien lisäksi.
+Kuvissa voisi olla esim. interaktiinen valitsin joka filtteröi merkittävät vaikutuskoot.
+
 
 ![Cohens1](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050536.png?raw=true)
 
