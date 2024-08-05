@@ -796,7 +796,7 @@ Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laa
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
 omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään Digialla sekä valmis tekemään paljon työtä sinne pääsemisen eteen. 
 
-Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa tarkemmin upotettuna Power BI:nä linkistä: https://mauno934.github.io/Tyonayte/ mutta tässä käyn läpi myös tuon.
+Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa tarkemmin upotettuna Power BI:nä linkistä: https://mauno934.github.io/Tyonayte/ mutta tässä käyn läpi suurimman osan noista ja myös enemmän teknisiä toteutuksia.
 
 
 Aiemmin esittelin kahden kokoista datasamplea osastoista, Top 10 osastoa esiintyvyydeltä sekä Top 10 Osastoa pelkästään yli tuhannen henkilön yrityksissä. Toin näistä tiedostot Power BI työpöytäsovellukseen ja aloin luoda graafista esitystä. Loin Clustered Bar Chartin jossa osastot näkyvät Y-akselilla ja eri arvot X akselilla, siistin taulukkoa monella eri tavalla ja kokeilin eri asioita. 
