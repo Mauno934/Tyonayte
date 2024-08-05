@@ -40,7 +40,7 @@ Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua k
     - [Teknisiä osuuksia](#teknisiä-osuuksia)
 - [Power BI](#power-bi)
   - [Datan formatointi ja visualisointi](#datan-formatointi-ja-visualisointi)
-  - [Monimutkainen data ja lopullinen työ](#monimutkainen data ja lopullinen työ)
+  - [Monimutkainen data ja lopullinen työ](#monimutkainen-data-ja-lopullinen-työ)
 
 
 
