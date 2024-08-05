@@ -43,7 +43,9 @@ Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua k
 
 
 
-#Python
+
+
+## Python
 Ehdottomasti lempiohjelmointikieleni, dynaaminen ja nopea määrittely, tehokas. Aloitetaan esittelemällä Python kielen toteutuksia valmistaaksemme datasta visualisointeja.
 
 
