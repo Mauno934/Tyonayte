@@ -1451,9 +1451,10 @@ print("Excel-työkirja 'analysis_results.xlsx' luotiin onnistuneesti.")
 ```
 </details>
 
-Datan käsittely mahdollisti monia asioita kuten vaikutuskokojen täsmällisempää ymmärtämistä, tässä kuvassa toimiala verrataan jokaista toista toimialaa vasten vertailukohteena liikevaihto. Cohen's d ilmaisee efektikokoa. 
-Jos pylväs on korkea, mutta se menee samanaikaisesti negatiiviselle puolelle, se tarkoittaa, että kyseisellä toimialalla on  negatiivisia Cohen's d -arvoja verrattuna muihin toimialoihin positiivisien lisäksi.
-Jos pylvään osa on positiivinen, se tarkoittaa, että ensisijainen toimiala (Industry_1) on menestyvämpi tai tuottoisampi verrattuna muihin toimialoihin (Industry_2). Värit pylväissä antaa käsityksen alojen määrästä
+Datan käsittely mahdollisti monia asioita kuten vaikutuskokojen täsmällisempää ymmärtämistä, tässä kuvassa toimiala verrataan jokaista toista toimialaa vasten vertailukohteena liikevaihto. Cohen's d ilmaisee efektikokoa. Se on hyvä mittaustapa määrittelemään todellisia vaikutuksia eri asioiden välillä ja tunnistamaan ilmiöitä joilla on nuanssia. 
+Jokainen pylväs on siis yhden toimialan kokonaiskuva, jossa on siis pareittain verrattu loput toimialoista ja otettu niiden suhteesta liikevaihtoon Cohen's d.
+Jos pylväs on korkea, mutta se menee samanaikaisesti negatiiviselle puolelle, se tarkoittaa, että kyseisellä toimialalla on negatiivisia Cohen's d -arvoja verrattuna muihin toimialoihin positiivisien lisäksi.
+
 
 ![Cohens1](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050536.png?raw=true)
 
