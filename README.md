@@ -1093,6 +1093,359 @@ Tein vielä pari kaavioita datasta ja harjoittelin muokkaamista ja filtteröinti
 
 
 
+### Monimutkainen data ja lopullinen työ
 
+Päätin vielä loppuun laittaa laajempaa dataa ja soveltaa visualisointiin. Ensimmäinen skripti filtteröi dataa edustavammaksi tilastollisin menetelmin sekä rikastaa sitä laskelmilla. Alunperin meinasin tyytyä tuohon mutta päätin että haluan lisää laskelmia ja kunnollisia korrelaatioita joten tein vielä toisin skriptin joka loi kaksi jättiläismäistä korrelaatiomatriisia. Rikastin laskelmilla kuten Cohenin D, ja datalla voisikin nyt tehdä melkein mitä vain visualisointeja. 
+<details>
+  <summary>Ensimmäinen skripti</summary>
 
+  ```python
+import pandas as pd
+import numpy as np
+from scipy.stats import norm
+
+# Lataa datasetti
+companies_df = pd.read_csv("C:\\Users\\Juhom\\Downloads\\Companies.csv")
+
+# Poista duplikaatit 'Technologies' -sarakkeen sisällä
+def remove_duplicates(tech_list):
+    if pd.isna(tech_list):
+        return tech_list
+    unique_techs = list(dict.fromkeys(tech_list.split(',')))
+    return ','.join(unique_techs)
+
+companies_df['Technologies'] = companies_df['Technologies'].apply(remove_duplicates)
+
+# Suodata yritykset, joilla on vuotuinen liikevaihto
+companies_with_revenue_df = companies_df[companies_df['Annual_Revenue'].notna()].copy()
+
+# Jaa teknologiat yksittäisiksi merkinnöiksi
+all_technologies = companies_with_revenue_df['Technologies'].str.split(',', expand=True).stack().reset_index(level=0, drop=False)
+unique_technologies = all_technologies[0].unique()
+
+# Luo DataFrame teknologioiden läsnäololle (1) tai poissaololle (0)
+technology_presence_df = pd.get_dummies(all_technologies.set_index('level_0')[0]).groupby('level_0').max()
+
+# Varmista, että kaikki yksilölliset teknologiat ovat sarakkeina
+technology_presence_df = technology_presence_df.reindex(columns=unique_technologies, fill_value=0)
+
+# Varmista, että technology_presence_df:llä on sama indeksi kuin companies_with_revenue_df:llä
+technology_presence_df = technology_presence_df.reindex(companies_with_revenue_df.index)
+
+# Laske teknologioiden määrä jokaiselle yritykselle
+companies_with_revenue_df['Technology_Count'] = technology_presence_df.sum(axis=1)
+
+# Valitse relevantit sarakkeet lopullista DataFramea varten
+final_df = pd.concat([companies_with_revenue_df[['Apollo_Account_Id', 'Annual_Revenue', 'Industry', 'Technology_Count', 'Lists']],
+                      technology_presence_df], axis=1)
+
+# Suodata rivit, joilla ei ole Apollo_Account_Id:tä
+final_df = final_df[final_df['Apollo_Account_Id'].notna()]
+
+# Varmista, että kaikki unique_technologies-elementit ovat final_df:ssä
+final_tech_columns = set(final_df.columns)
+unique_technologies_in_final_df = [tech for tech in unique_technologies if tech in final_tech_columns]
+
+# Laske teknologioiden läsnäolon ja vuotuisen liikevaihdon välinen korrelaatio
+correlation_with_revenue = final_df[unique_technologies_in_final_df + ['Annual_Revenue']].corr()['Annual_Revenue'].drop('Annual_Revenue')
+
+# Tarkista null-arvot korrelaatioissa
+if correlation_with_revenue.isnull().any():
+    print("Varoitus: Korrelaatioissa on null-arvoja! Tarkista datasi ja laskelmasi.")
+
+# Laske toimialojen korrelaatio vuotuiseen liikevaihtoon
+industry_correlation = pd.get_dummies(final_df['Industry'])
+industry_correlation['Annual_Revenue'] = final_df['Annual_Revenue']
+industry_correlation_corr = industry_correlation.corr()['Annual_Revenue'].drop('Annual_Revenue')
+
+# Järjestä toimialat niiden korrelaation mukaan liikevaihtoon
+industry_ranking = industry_correlation_corr.rank(ascending=False).to_dict()
+
+# Järjestä teknologiat niiden liikevaihtokorrelaation mukaan normaalijakaumaa käyttäen
+technology_scores = norm.cdf(correlation_with_revenue)
+
+# Laske Technology_General_Valence-pisteet
+technology_median_score = np.median(technology_scores)
+final_df['Technology_General_Valence'] = final_df['Lists'].apply(lambda x: len(str(x).split(','))) + technology_median_score
+
+# Laske Tech_Correlation_with_revenue kunkin yrityksen teknologioiden keskimääräisen korrelaation perusteella
+def calculate_tech_correlation(row):
+    techs = row[unique_technologies_in_final_df]  # Yrityksen teknologiat
+    present_techs = techs[techs > 0].index  # Vain käytössä olevat teknologiat
+    correlations = correlation_with_revenue.loc[present_techs]  # Teknologioiden korrelaatiot
+    if len(correlations) > 0:
+        return correlations.mean()  # Korrelaatioiden keskiarvo
+    else:
+        return np.nan
+
+final_df['Tech_Correlation_with_revenue'] = final_df.apply(calculate_tech_correlation, axis=1)
+
+# Luo toimialakorrelaatiokolumnit vektorisoiduilla operaatioilla
+final_df = final_df.join(final_df['Industry'].map(industry_correlation_corr.to_dict()).rename('Industry_Correlation_with_revenue'))
+final_df = final_df.join(final_df['Industry'].map(industry_ranking).rename('Industry_Ranking'))
+
+# Sovella teknologiapisteitä teknologiasarakkeisiin vektorisoiduilla operaatioilla
+for tech in unique_technologies_in_final_df:
+    final_df[tech] *= technology_scores[unique_technologies_in_final_df.index(tech)]
+
+# Laske keskiarvo, maksimi, minimi, mediaani ja lukumäärä liikevaihdolle kullekin teknologialle
+technology_stats = final_df.melt(id_vars=['Annual_Revenue'], value_vars=unique_technologies_in_final_df, var_name='Technology', value_name='Presence')
+technology_stats = technology_stats[technology_stats['Presence'] > 0].groupby('Technology')['Annual_Revenue'].agg(['mean', 'max', 'min', 'median', 'count'])
+
+# Laske keskiarvo, maksimi, minimi, mediaani ja lukumäärä liikevaihdolle kullekin toimialalle
+industry_stats = final_df.groupby('Industry')['Annual_Revenue'].agg(['mean', 'max', 'min', 'median', 'count'])
+
+# Täytä puuttuvat arvot sopivilla oletusarvoilla
+final_df.fillna(0, inplace=True)
+correlation_with_revenue_df = correlation_with_revenue.reset_index()
+correlation_with_revenue_df.columns = ['Technology', 'Correlation_with_Revenue']
+correlation_with_revenue_df = correlation_with_revenue_df.merge(technology_stats.reset_index(), on='Technology', how='left')
+correlation_with_revenue_df.rename(columns={'mean': 'Keskiarvo_liikevaihto', 'max': 'LiikevaihtoMAX', 'min': 'LiikevaihtoMIN', 'median': 'LiikevaihtoMedian', 'count': 'N'}, inplace=True)
+correlation_with_revenue_df.fillna(0, inplace=True)
+
+industry_correlation_df = industry_correlation_corr.reset_index()
+industry_correlation_df.columns = ['Industry', 'Correlation_with_Revenue']
+industry_correlation_df = industry_correlation_df.merge(industry_stats.reset_index(), on='Industry', how='left')
+industry_correlation_df.rename(columns={'mean': 'Keskiarvo_liikevaihto', 'max': 'LiikevaihtoMAX', 'min': 'LiikevaihtoMIN', 'median': 'LiikevaihtoMedian', 'count': 'N'}, inplace=True)
+industry_correlation_df.fillna(0, inplace=True)
+
+# Muotoile numerot helpommin luettaviksi
+correlation_with_revenue_df['Keskiarvo_liikevaihto'] = correlation_with_revenue_df['Keskiarvo_liikevaihto'].apply(lambda x: f"{x:,.0f}")
+correlation_with_revenue_df['LiikevaihtoMAX'] = correlation_with_revenue_df['LiikevaihtoMAX'].apply(lambda x: f"{x:,.0f}")
+correlation_with_revenue_df['LiikevaihtoMIN'] = correlation_with_revenue_df['LiikevaihtoMIN'].apply(lambda x: f"{x:,.0f}")
+correlation_with_revenue_df['LiikevaihtoMedian'] = correlation_with_revenue_df['LiikevaihtoMedian'].apply(lambda x: f"{x:,.0f}")
+
+industry_correlation_df['Keskiarvo_liikevaihto'] = industry_correlation_df['Keskiarvo_liikevaihto'].apply(lambda x: f"{x:,.0f}")
+industry_correlation_df['LiikevaihtoMAX'] = industry_correlation_df['LiikevaihtoMAX'].apply(lambda x: f"{x:,.0f}")
+industry_correlation_df['LiikevaihtoMIN'] = industry_correlation_df['LiikevaihtoMIN'].apply(lambda x: f"{x:,.0f}")
+industry_correlation_df['LiikevaihtoMedian'] = industry_correlation_df['LiikevaihtoMedian'].apply(lambda x: f"{x:,.0f}")
+
+# Sovella logaritmimuunnos ja suodata
+final_df['Log_Annual_Revenue'] = np.log(final_df['Annual_Revenue'])
+revenue_95_percentile = final_df['Log_Annual_Revenue'].quantile(0.95)
+filtered_final_df = final_df[final_df['Log_Annual_Revenue'] <= revenue_95_percentile]
+
+# Poista teknologiasarakkeet, joilla on pelkkiä nollia suodatuksen jälkeen
+filtered_final_df = filtered_final_df.loc[:, (filtered_final_df != 0).any(axis=0)]
+
+# Laske suodatetut tilastot
+filtered_weighted_mean_log_revenue = np.exp(np.average(filtered_final_df['Log_Annual_Revenue'], weights=filtered_final_df['Technology_Count']))
+filtered_median_log_revenue = np.exp(filtered_final_df['Log_Annual_Revenue'].median())
+filtered_mean_tech_count = filtered_final_df['Technology_Count'].mean()
+filtered_median_tech_count = filtered_final_df['Technology_Count'].median()
+
+# Tulosta tulokset
+print(f"Suodatettu painotettu logaritmisen vuotuisen liikevaihdon keskiarvo (95. prosenttipiste): {filtered_weighted_mean_log_revenue}")
+print(f"Suodatettu logaritmisen vuotuisen liikevaihdon mediaani (95. prosenttipiste): {filtered_median_log_revenue}")
+print(f"Suodatettu teknologioiden määrän keskiarvo (95. prosenttipiste): {filtered_mean_tech_count}")
+print(f"Suodatettu teknologioiden määrän mediaani (95. prosenttipiste): {filtered_median_tech_count}")
+
+# Tallenna lopullinen DataFrame CSV-tiedostoon Power BI -analyysia varten
+filtered_final_df.to_csv('filtered_companies_technology_industry_scoring.csv', index=False)
+correlation_with_revenue_df.to_csv('filtered_technology_revenue_correlation_all.csv', index=False)
+industry_correlation_df.to_csv('filtered_industry_revenue_correlation.csv', index=False)
+
+# Tulosta ensimmäiset rivit lopullisesta DataFramesta
+print("Lopullinen DataFrame Power BI -analyysiä varten:")
+print(filtered_final_df.head())
+
+# Tulosta korrelaatiotulokset
+print("Teknologiat ja niiden korrelaatiot liikevaihtoon sekä keskiarvoinen liikevaihto:")
+print(correlation_with_revenue_df)
+print("Toimialat ja niiden korrelaatiot liikevaihtoon sekä keskiarvoinen liikevaihto:")
+print(industry_correlation_df)
+
+</details>
+```
+</details>
+<details>
+  <summary>Toinen skripti</summary>
+  
+  ```python
+import pandas as pd
+import numpy as np
+from scipy.stats import norm, skew, kurtosis
+
+# Lataa datasetti
+companies_df = pd.read_csv('filtered_companies_technology_industry_scoring.csv')
+
+# Tunnista teknologiakolumnit
+start_col = companies_df.columns.get_loc('Lists') + 1
+end_col = companies_df.columns.get_loc('Technology_General_Valence') - 1
+technology_columns = companies_df.columns[start_col:end_col + 1]
+
+# Luo binäärinen läsnäolo/poissaolo DataFrame teknologioille
+technology_presence_df = (companies_df[technology_columns] > 0).astype(int)
+
+# Suodata teknologiat, joilla on riittävästi dataa
+technology_presence_counts = technology_presence_df.sum()
+sufficient_data_technologies = technology_presence_counts[technology_presence_counts > 1].index
+technology_presence_df = technology_presence_df[sufficient_data_technologies]
+
+# Poista teknologiat, joilla on NaN-korrelaatioarvoja
+technology_corr = technology_presence_df.corr()
+technology_corr = technology_corr.dropna(axis=0, how='any').dropna(axis=1, how='any')
+
+# Tallenna teknologiakorrelaatiomatriisi CSV-tiedostoon
+technology_corr.to_csv('technology_correlation_matrix.csv')
+
+# Tulosta korrelaatiomatriisi varmistukseksi
+print("Technology Correlation Matrix:")
+print(technology_corr.head())
+
+# Lataa suodatetut datasetit
+correlation_with_revenue_df = pd.read_csv('filtered_technology_revenue_correlation_all.csv')
+industry_correlation_df = pd.read_csv('filtered_industry_revenue_correlation.csv')
+
+# Luo ID:t jokaiselle riville
+companies_df['ID'] = range(1, len(companies_df) + 1)
+
+# Laske tilastot
+stats = {
+    'mean': companies_df['Annual_Revenue'].mean(),
+    'median': companies_df['Annual_Revenue'].median(),
+    'mode': companies_df['Annual_Revenue'].mode()[0] if not companies_df['Annual_Revenue'].mode().empty else np.nan,
+    'std_dev': companies_df['Annual_Revenue'].std(),
+    'variance': companies_df['Annual_Revenue'].var(),
+    'skewness': skew(companies_df['Annual_Revenue']),
+    'kurtosis': kurtosis(companies_df['Annual_Revenue']),
+    'min': companies_df['Annual_Revenue'].min(),
+    'max': companies_df['Annual_Revenue'].max(),
+    '25th_percentile': np.percentile(companies_df['Annual_Revenue'], 25),
+    '50th_percentile': np.percentile(companies_df['Annual_Revenue'], 50),
+    '75th_percentile': np.percentile(companies_df['Annual_Revenue'], 75),
+    '90th_percentile': np.percentile(companies_df['Annual_Revenue'], 90),
+    '95th_percentile': np.percentile(companies_df['Annual_Revenue'], 95),
+    '99th_percentile': np.percentile(companies_df['Annual_Revenue'], 99)
+}
+
+# Lisää normaalijakauman arvot
+companies_df['Normal_Distribution'] = norm.pdf(companies_df['Annual_Revenue'], stats['mean'], stats['std_dev'])
+
+# Funktio Cohenin d:n laskemiseen lisätarkistuksin
+def cohens_d(x, y):
+    nx = len(x)
+    ny = len(y)
+    if nx < 2 or ny < 2:
+        return np.nan  # Ei tarpeeksi näytteitä Cohenin d:n laskemiseen
+    dof = nx + ny - 2
+    pooled_std = np.sqrt(((nx - 1) * np.std(x, ddof=1) ** 2 + (ny - 1) * np.std(y, ddof=1) ** 2) / dof)
+    if pooled_std == 0:
+        return np.nan  # Standard deviation is zero, can't calculate Cohen's d
+    return (np.mean(x) - np.mean(y)) / pooled_std
+
+# Suodata pois rivit, joissa toimiala on merkitty "0":ksi toimialaan liittyvää analyysiä varten
+industry_related_df = companies_df[companies_df['Industry'] != '0']
+
+# Laske Cohenin d kullekin teknologiakäytön määrälle ja toimialalle verrattuna koko populaatioon
+tech_groups = companies_df.groupby('Technology_Count')
+industry_groups = industry_related_df.groupby('Industry')  # Käytä suodatettua datasettiä
+
+cohens_d_tech_overall = []
+cohens_d_industry_overall = []
+
+for name, group in tech_groups:
+    d = cohens_d(group['Annual_Revenue'], companies_df['Annual_Revenue'])
+    cohens_d_tech_overall.append({'Technology_Count': name, 'Cohens_d': d})
+
+for name, group in industry_groups:
+    d = cohens_d(group['Annual_Revenue'], industry_related_df['Annual_Revenue'])  # Käytä suodatettua datasettiä
+    cohens_d_industry_overall.append({'Industry': name, 'Cohens_d': d})
+
+cohens_d_tech_overall_df = pd.DataFrame(cohens_d_tech_overall)
+cohens_d_industry_overall_df = pd.DataFrame(cohens_d_industry_overall)
+
+# Laske Cohenin d kullekin teknologiakäytön määrälle ja toimialalle verrattuna toisiinsa
+tech_counts = sorted(companies_df['Technology_Count'].unique())
+industries = industry_related_df['Industry'].unique()  # Käytä suodatettua datasettiä
+
+cohens_d_tech_groups = []
+cohens_d_industry_groups = []
+
+# Pareittainen vertailu Technology Countien osalta
+for i in range(len(tech_counts)):
+    for j in range(i + 1, len(tech_counts)):
+        group1 = companies_df[companies_df['Technology_Count'] == tech_counts[i]]
+        group2 = companies_df[companies_df['Technology_Count'] == tech_counts[j]]
+        d = cohens_d(group1['Annual_Revenue'], group2['Annual_Revenue'])
+        cohens_d_tech_groups.append({'Technology_Count_1': tech_counts[i], 'Technology_Count_2': tech_counts[j], 'Cohens_d': d})
+
+# Pareittainen vertailu Toimialojen osalta
+for i in range(len(industries)):
+    for j in range(i + 1, len(industries)):
+        group1 = industry_related_df[industry_related_df['Industry'] == industries[i]]  # Käytä suodatettua datasettiä
+        group2 = industry_related_df[industry_related_df['Industry'] == industries[j]]  # Käytä suodatettua datasettiä
+        d = cohens_d(group1['Annual_Revenue'], group2['Annual_Revenue'])
+        cohens_d_industry_groups.append({'Industry_1': industries[i], 'Industry_2': industries[j], 'Cohens_d': d})
+
+cohens_d_tech_groups_df = pd.DataFrame(cohens_d_tech_groups)
+cohens_d_industry_groups_df = pd.DataFrame(cohens_d_industry_groups)
+
+# Lisää Cohenin d -arvot companies_df DataFrameen
+companies_df = companies_df.merge(cohens_d_tech_overall_df, left_on='Technology_Count', right_on='Technology_Count', how='left', suffixes=('', '_Tech'))
+companies_df = companies_df.merge(cohens_d_industry_overall_df, left_on='Industry', right_on='Industry', how='left', suffixes=('', '_Industry'))
+
+filtered_companies = companies_df.drop(columns=technology_columns)
+
+# Luo taulukko, joka listaa teknologiakorrelaatiot Apollo_Account_Id:n kanssa
+technology_correlations = companies_df[['Apollo_Account_Id'] + list(sufficient_data_technologies)]
+
+# Laske pareittaiset korrelaatiot toimialoille
+industry_columns = pd.get_dummies(industry_related_df['Industry'])  # Käytä suodatettua datasettiä
+industry_corr_matrix = industry_columns.corr().dropna(axis=0, how='any').dropna(axis=1, how='any')
+
+# Tallenna tulokset uusiin CSV-tiedostoihin Power BI -visualisointia varten
+filtered_companies.to_csv('filtered_companies_with_normal_distribution.csv', index=False)
+technology_correlations.to_csv('technology_correlations_with_apollo_account_id.csv', index=False)
+cohens_d_tech_overall_df.to_csv('cohens_d_technology_overall.csv', index=False)
+cohens_d_industry_overall_df.to_csv('cohens_d_industry_overall.csv', index=False)
+cohens_d_tech_groups_df.to_csv('cohens_d_technology_groups.csv', index=False)
+cohens_d_industry_groups_df.to_csv('cohens_d_industry_groups.csv', index=False)
+technology_corr.to_csv('technology_correlation_matrix.csv')
+industry_corr_matrix.to_csv('industry_correlation_matrix.csv')
+
+# Tallenna tilastot CSV-tiedostoon
+stats_df = pd.DataFrame([stats])
+stats_df.to_csv('annual_revenue_statistics.csv', index=False)
+
+# Tulosta ensimmäiset rivit lopullisista DataFrameista
+print("Filtered Companies DataFrame with Normal Distribution:")
+print(companies_df.head())
+
+print("Cohen's d for Technologies (Overall):")
+print(cohens_d_tech_overall_df.head())
+
+print("Cohen's d for Industries (Overall):")
+print(cohens_d_industry_overall_df.head())
+
+print("Cohen's d for Technology Groups:")
+print(cohens_d_tech_groups_df.head())
+
+print("Cohen's d for Industry Groups:")
+print(cohens_d_industry_groups_df.head())
+
+print("Annual Revenue Statistics:")
+print(stats_df)
+
+print("Technology Correlation Matrix:")
+print(technology_corr.head())
+
+print("Industry Correlation Matrix:")
+print(industry_corr_matrix.head())
+
+# Tallenna tulokset Excel-työkirjaan
+with pd.ExcelWriter('analysis_results.xlsx') as writer:
+    filtered_companies.to_excel(writer, sheet_name='Filtered_Companies', index=False)
+    cohens_d_tech_overall_df.to_excel(writer, sheet_name='Cohen_d_Tech_Overall', index=False)
+    cohens_d_industry_overall_df.to_excel(writer, sheet_name='Cohen_d_Ind_Overall', index=False)
+    cohens_d_tech_groups_df.to_excel(writer, sheet_name='Cohen_d_Tech_Groups', index=False)
+    cohens_d_industry_groups_df.to_excel(writer, sheet_name='Cohen_d_Ind_Groups', index=False)
+    technology_corr.to_excel(writer, sheet_name='Tech_Corr_Matrix')
+    industry_corr_matrix.to_excel(writer, sheet_name='Ind_Corr_Matrix')
+    stats_df.to_excel(writer, sheet_name='Annual_Rev_Stats', index=False)
+    technology_correlations.to_excel(writer, sheet_name='Tech_Corr_Apollo_ID', index=False)
+
+print("Excel-työkirja 'analysis_results.xlsx' luotiin onnistuneesti.")
+```
+</details>
 
