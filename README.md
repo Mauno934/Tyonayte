@@ -792,7 +792,7 @@ Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laa
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
 omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään Digialla sekä valmis tekemään paljon työtä sinne pääsemisen eteen. 
 
-Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa linkistä: https://mauno934.github.io/Tyonayte/ mutta teknisiä näytteitä sieltä ei erityisemmin löydy. 
+Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa linkistä: https://mauno934.github.io/Tyonayte/ mutta tässä käyn läpi myös tuon.
 
 
 Aiemmin esittelin kahden kokoista datasamplea osastoista, Top 10 osastoa esiintyvyydeltä sekä Top 10 Osastoa pelkästään yli tuhannen henkilön yrityksissä. Toin näistä tiedostot Power BI työpöytäsovellukseen ja aloin luoda graafista esitystä. Loin Clustered Bar Chartin jossa osastot näkyvät Y-akselilla ja eri arvot X akselilla, siistin taulukkoa monella eri tavalla ja kokeilin eri asioita. 
@@ -1105,7 +1105,7 @@ import numpy as np
 from scipy.stats import norm
 
 # Lataa datasetti
-companies_df = pd.read_csv("C:\\Users\\Juhom\\Downloads\\Companies.csv")
+companies_df = pd.read_csv("data.csv")
 
 # Poista duplikaatit 'Technologies' -sarakkeen sisällä
 def remove_duplicates(tech_list):
@@ -1136,11 +1136,11 @@ technology_presence_df = technology_presence_df.reindex(companies_with_revenue_d
 companies_with_revenue_df['Technology_Count'] = technology_presence_df.sum(axis=1)
 
 # Valitse relevantit sarakkeet lopullista DataFramea varten
-final_df = pd.concat([companies_with_revenue_df[['Apollo_Account_Id', 'Annual_Revenue', 'Industry', 'Technology_Count', 'Lists']],
+final_df = pd.concat([companies_with_revenue_df[['Account_Id', 'Annual_Revenue', 'Industry', 'Technology_Count', 'Lists']],
                       technology_presence_df], axis=1)
 
-# Suodata rivit, joilla ei ole Apollo_Account_Id:tä
-final_df = final_df[final_df['Apollo_Account_Id'].notna()]
+# Suodata rivit, joilla ei ole Account_Id:tä
+final_df = final_df[final_df['Account_Id'].notna()]
 
 # Varmista, että kaikki unique_technologies-elementit ovat final_df:ssä
 final_tech_columns = set(final_df.columns)
@@ -1255,7 +1255,7 @@ print(correlation_with_revenue_df)
 print("Toimialat ja niiden korrelaatiot liikevaihtoon sekä keskiarvoinen liikevaihto:")
 print(industry_correlation_df)
 
-</details>
+
 ```
 </details>
 <details>
@@ -1387,8 +1387,8 @@ companies_df = companies_df.merge(cohens_d_industry_overall_df, left_on='Industr
 
 filtered_companies = companies_df.drop(columns=technology_columns)
 
-# Luo taulukko, joka listaa teknologiakorrelaatiot Apollo_Account_Id:n kanssa
-technology_correlations = companies_df[['Apollo_Account_Id'] + list(sufficient_data_technologies)]
+# Luo taulukko, joka listaa teknologiakorrelaatiot Account_Id:n kanssa
+technology_correlations = companies_df[['Account_Id'] + list(sufficient_data_technologies)]
 
 # Laske pareittaiset korrelaatiot toimialoille
 industry_columns = pd.get_dummies(industry_related_df['Industry'])  # Käytä suodatettua datasettiä
@@ -1396,7 +1396,7 @@ industry_corr_matrix = industry_columns.corr().dropna(axis=0, how='any').dropna(
 
 # Tallenna tulokset uusiin CSV-tiedostoihin Power BI -visualisointia varten
 filtered_companies.to_csv('filtered_companies_with_normal_distribution.csv', index=False)
-technology_correlations.to_csv('technology_correlations_with_apollo_account_id.csv', index=False)
+technology_correlations.to_csv('technology_correlations_with_Account_Id.csv', index=False)
 cohens_d_tech_overall_df.to_csv('cohens_d_technology_overall.csv', index=False)
 cohens_d_industry_overall_df.to_csv('cohens_d_industry_overall.csv', index=False)
 cohens_d_tech_groups_df.to_csv('cohens_d_technology_groups.csv', index=False)
@@ -1448,4 +1448,23 @@ with pd.ExcelWriter('analysis_results.xlsx') as writer:
 print("Excel-työkirja 'analysis_results.xlsx' luotiin onnistuneesti.")
 ```
 </details>
+
+Datan käsittely mahdollisti monia asioita kuten vaikutuskokojen täsmällisempää ymmärtämistä, tässä kuvassa toimiala verrataan jokaista toista toimialaa vasten vertailukohteena liikevaihto. Cohen's d ilmaisee efektikokoa. 
+Jos pylväs on korkea, mutta se menee samanaikaisesti negatiiviselle puolelle, se tarkoittaa, että kyseisellä toimialalla on  negatiivisia Cohen's d -arvoja verrattuna muihin toimialoihin positiivisien lisäksi.
+Jos pylvään osa on positiivinen, se tarkoittaa, että ensisijainen toimiala (Industry_1) on menestyvämpi tai tuottoisampi verrattuna muihin toimialoihin (Industry_2). Värit pylväissä antaa käsityksen alojen määrästä
+
+[!Cohens1](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050536.png?raw=true)
+
+
+
+
+Toisessa esimerkissä teknologioiden määrien vaikutuskoot liikevaihtoon
+
+[!Cohens2](https://github.com/Mauno934/Tyonayte/blob/main/Screenshot%202024-08-05%20050548.png?raw=true)
+
+
+Ja tässäpä on oikeastaan kaikki!
+
+
+
 
