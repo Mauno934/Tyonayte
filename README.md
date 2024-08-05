@@ -38,7 +38,7 @@ Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua k
       - [Tekoälyversio](#tekoälyversio-1)
       - [Hybridiversio](#hybridiversio)
     - [Teknisiä osuuksia](#teknisiä-osuuksia)
-- [Power bi](#power-bi)
+- [Power BI](#power-bi)
   - [Datan formatointi ja visualisointi](#datan-formatointi-ja-visualisointi)
 
 
@@ -784,7 +784,7 @@ Nämä ovat vain esimerkkitoteutuksia yleisestä loogisesta ajattelusta mitä ku
 ymmärrykseen esimerkiksi asiakkaan tarpeista, mahdollisista parhaista asiakkaista tai toimenpiteistä heidän nykyisessä tilanteessaan. 
 
 
-# Power bi
+# Power BI
 
 ### Datan formatointi ja visualisointi
 
@@ -1082,7 +1082,7 @@ plt.show()
 
 
 
-#### Visuaalinen muokkaus ja filtteröinti power bi:ssä
+#### Visuaalinen muokkaus ja filtteröinti Power BI:ssä
 
 Tein vielä pari kaavioita datasta ja harjoittelin muokkaamista ja filtteröintiä ehdollisilla säännöillä. Ensimmäisessä kuvassa on filtteröity top 25 käyttäen top N filtteröintiä ja toisessa on kaikki toimialat pisteiden keskiarvoineen laitettu piirakkakaavioon.
 
