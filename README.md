@@ -5,7 +5,7 @@ Visualisointi on uutta eikä sille ole niin ollut tarvetta nykyisessä työpaika
 Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin tietynlaisen samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
 jota ei haluattaisi jakaa. 
 
-Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niin tarkoitus on luoda nopeasti kuitenkin riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osin myös näyttää siltä.
+Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niiden tarkoitus on luoda riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osin myös näyttää siltä.
 
 Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös [Power BI osuuteen](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa [modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa. Haastavimmat datan käsittelyt ja laskennat Pythonilla, sekä niiden visualisointi löytyvät ihan [lopusta](#monimutkainen-data-ja-lopullinen-työ).
 
