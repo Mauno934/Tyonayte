@@ -794,7 +794,7 @@ ymmärrykseen esimerkiksi asiakkaan tarpeista, mahdollisista parhaista asiakkais
 
 Kun ensimmäisen kerran avasin Power BI:n päätin laittaa sinne tietokannan laajoja osuuksia csv muodossa. Ratkaisu ei ollut elegantein mahdollinen mutta opin käyttämään ohjelmaa mielestäni melko hyvin lyhyessä ajassa. Kuitenkin huomatessani DAX-kaavojen rajoitukset, päätin esikäsitellä dataa pythonilla. Aiemmin tuotokset tekoälyratkaisua mukaan lukematta ovat suunnattu nimenomaan dataksi Power BI:hin. Jotkut ovat vieläkin liian isoja tai huonosti muotoiltuja
 näytteitä mutta niistä voi luoda uusia sopivampia osia. Tuotin ideat lennosta joten todennäköisyys että sain aikaiseksi todella hyvin kuvaavaa dataa ja uskomattomia visuaaleja on melko olematon. Ideana tässä oli näyttää että olen valmis
-omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään Digialla sekä valmis tekemään paljon työtä sinne pääsemisen eteen. 
+omaksumaan teknlogioita nopeasti ja erittäin kiinnostunut työskentelemään sen eteen.
 
 Sain kuitenkin opeteltua melko paljon erilaista käsittelyä visualisoinnissa ja osaan tehdä sitä tehokkaasti. Joissain töissä joita tässä esittelen painottuu alustava käsittely pythonilla, joissain yksinkertainen tapa kuvata dataa ja ilmiöitä sekä myös DAX kaavojen soveltaminen. Työni visuaalinen puoli on katsottavissa tarkemmin upotettuna Power BI:nä linkistä: https://mauno934.github.io/Tyonayte/ mutta tässä käyn läpi suurimman osan noista ja myös enemmän joitain teknisia toteutuksia joita upotetussa näytteessä ei ole.
 
