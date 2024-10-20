@@ -1484,3 +1484,200 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 
+##Edistynyt Data-analyysi Sparkilla ja Azurella
+Tässä osiossa tutkittiin edistyneitä data-analyysitekniikoita käyttämällä Apache Sparkia ja Azuren palveluita. Suoritimme erilaisia operaatioita, kuten tietojen lataamista SQLite-tietokannasta, niiden käsittelyä Sparkilla ja tulosten tallentamista Azure Blob Storageen. Lisäksi sovelsimme koneoppimisalgoritmeja ja teimme sentimenttianalyysin tekstuaaliselle datalle.
+
+###Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
+Aloitimme kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
+
+```python
+# Kopioidaan tiedosto DBFS:stä paikalliselle ajurille
+dbutils.fs.cp("dbfs:/dbfs/tmp/Apollo2.db", "file:/tmp/Apollo2.db")
+
+# Paikallisen tiedoston polku Sparkille
+local_file_path_for_spark = "file:/tmp/Apollo2.db"
+SQLite-datan lataaminen Spark DataFrameen
+Käyttämällä JDBC
+ä latasimme tiedot SQLite-tietokannasta Spark DataFrameen käsittelyä varten:
+
+# Ladataan SQLite-tiedosto Spark DataFrameen JDBC:n kautta
+df = spark.read.format("jdbc").options(
+    url=f"jdbc:sqlite:{local_file_path_for_spark}",
+    dbtable="Companies",
+    driver="org.sqlite.JDBC"
+).load()
+
+# Näytetään muutama rivi varmistaaksemme, että data on ladattu oikein
+df.show(5)
+```
+
+###Lineaarinen regressioanalyysi
+Suorin lineaarisen regressioanalyysin ennustaaksemme vuosiliikevaihtoa perustuen työntekijöiden määrään ja kunkin yrityksen käyttämien teknologioiden lukumäärään:
+```python
+from pyspark.sql.functions import size, split, col
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.regression import LinearRegression
+
+# Oletetaan, että 'Technologies' on sarake, joka sisältää teknologioiden luettelon
+# Lisätään uusi sarake "Technology_Count", joka laskee teknologioiden määrän per yritys
+df = df.withColumn("Technology_Count", size(split(col("Technologies"), ",")))
+
+# Suodatetaan pois rivit, joissa on NULL-arvoja tarvittavissa sarakkeissa
+df_cleaned = df.filter(
+    df["Number_of_Employees"].isNotNull() &
+    df["Technology_Count"].isNotNull() &
+    df["Annual_Revenue"].isNotNull()
+)
+
+# Valitaan sarakkeet, joita käytetään ennustamiseen, mukaan lukien "Company"-sarake
+df_features = df_cleaned.select("Company", "Number_of_Employees", "Technology_Count", "Annual_Revenue")
+
+# Muodostetaan ominaisuudet ja targetti
+assembler = VectorAssembler(inputCols=["Number_of_Employees", "Technology_Count"], outputCol="features")
+transformed_data = assembler.transform(df_features)
+
+# Määritetään lineaarinen regressiomalli
+lr = LinearRegression(featuresCol="features", labelCol="Annual_Revenue")
+
+# Sovitetaan malli
+lr_model = lr.fit(transformed_data)
+
+# Ennustetaan liikevaihto
+predictions = lr_model.transform(transformed_data)
+
+# Näytetään yritys, todellinen liikevaihto ja ennustettu liikevaihto
+predictions.select("Company", "Annual_Revenue", "prediction").show(10)
+
+
+# Aseta yhteys Blob Storageen
+spark.conf.set(f"fs.azure.account.key.{storage_account_name}.blob.core.windows.net", storage_account_access_key)
+```
+
+###K-Means-klusterointi
+Sovelsin K-Means-klusterointia segmentoidaksemme yritykset työntekijöiden määrän ja vuosiliikevaihdon perusteella:
+```python
+from pyspark.ml.clustering import KMeans
+from pyspark.ml.feature import VectorAssembler
+
+# Valmistellaan data klusterointia varten
+assembler = VectorAssembler(inputCols=["Number_of_Employees", "Annual_Revenue"], outputCol="features")
+df_kmeans = assembler.transform(df_cleaned)
+
+# Määritetään K-Means-klusterointi, k = 4
+kmeans = KMeans(k=4, seed=1)
+model = kmeans.fit(df_kmeans)
+
+# Ennustetaan klusterit
+clusters = model.transform(df_kmeans)
+
+# Näytetään klusterien ennusteet yrityksittäin
+clusters.select("Company", "Number_of_Employees", "Annual_Revenue", "prediction").show(10)
+```
+
+
+### Tallenna klusteroinnin tulokset CSV-muodossa Blob Storageen
+clusters.select("Company", "Number_of_Employees", "Annual_Revenue", "prediction").write.mode("overwrite").csv(output_path)
+
+print(f"Klusteroinnin tulokset tallennettu polkuun {output_path}")
+###Sentimenttianalyysi SEO-kuvauksille
+Käyttäen TextBlob-kirjastoa, tein sentimenttianalyysin SEO-kuvauksille testaamaan yrityksen kuvauksen välittämän tunteen analysointia:
+```python
+%pip install textblob
+
+from textblob import TextBlob
+from pyspark.sql.functions import udf
+from pyspark.sql.types import DoubleType
+
+# Luodaan UDF-funktio sentimenttianalyysille
+def analyze_sentiment(text):
+    if text:
+        blob = TextBlob(text)
+        return blob.sentiment.polarity  # Palautetaan sentimentin polariteetti (-1...1)
+    return None
+
+# Rekisteröidään UDF (User Defined Function) PySparkille
+sentiment_udf = udf(analyze_sentiment, DoubleType())
+
+# Lisätään uusi sentimentti-sarake, joka analysoi SEO-kuvaukset
+df_with_sentiment = df.withColumn("Sentiment_Polarity", sentiment_udf(df["SEO_Description"]))
+
+# Näytetään tulokset
+df_with_sentiment.select("Company", "SEO_Description", "Sentiment_Polarity").show(10, truncate=False)
+Sentimenttianalyysin tulosten tallentaminen
+Tallensimme sentimenttianalyysin tulokset Azure Blob Storageen:
+
+
+output_blob_name = "seo_sentiment_analysis.csv"
+output_path = f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net/{output_blob_name}"
+
+# Tallenna sentimenttianalyysin tulokset Blob Storageen
+df_with_sentiment.select("Company", "SEO_Description", "Sentiment_Polarity").write.mode("overwrite").csv(output_path)
+
+print(f"Sentimenttianalyysin tulokset tallennettu polkuun {output_path}")
+```
+###Tilastollinen analyysi ja mediaanien laskeminen
+Ajattelin tietokantaa perusjoukkoja, ja vertasin yrityksiä joilla on monta rikasta datapistettä perusjoukkoon että tiedän mitä näyte edustavaa, yleisesti näyttää että paremmin dokumentoidut isommat yritykset ovat useammin edustettuja
+
+```python
+from pyspark.sql.functions import expr, avg, min, max
+
+# Lasketaan mediaanit käyttäen approx_percentile
+mediaanit = df_cleaned.select(
+    expr("percentile_approx(Annual_Revenue, 0.5)").alias("Median_Annual_Revenue"),
+    expr("percentile_approx(Number_of_Employees, 0.5)").alias("Median_Number_of_Employees"),
+    expr("percentile_approx(Total_Funding, 0.5)").alias("Median_Total_Funding")
+)
+
+# Lasketaan keskiarvot, minimi- ja maksimiarvot
+tilastot = df_cleaned.select(
+    avg("Annual_Revenue").alias("Avg_Annual_Revenue"),
+    min("Annual_Revenue").alias("Min_Annual_Revenue"),
+    max("Annual_Revenue").alias("Max_Annual_Revenue"),
+    avg("Number_of_Employees").alias("Avg_Number_of_Employees"),
+    min("Number_of_Employees").alias("Min_Number_of_Employees"),
+    max("Number_of_Employees").alias("Max_Number_of_Employees"),
+    avg("Total_Funding").alias("Avg_Total_Funding"),
+    min("Total_Funding").alias("Min_Total_Funding"),
+    max("Total_Funding").alias("Max_Total_Funding")
+)
+
+# Näytetään mediaanit ja tilastot
+mediaanit.show()
+tilastot.show()
+Vertailimme myös yrityksiä, joilla on täydet tiedot (tiedot vuosiliikevaihdosta, työntekijöiden määrästä ja kokonaisrahoituksesta) niihin, joilta puuttuu osa tiedoista:
+
+python
+Kopioi koodi
+# Yritykset, joilla on tiedot kaikista kolmesta muuttujasta
+df_full_info = df_cleaned.filter(
+    df_cleaned["Annual_Revenue"].isNotNull() &
+    df_cleaned["Number_of_Employees"].isNotNull() &
+    df_cleaned["Total_Funding"].isNotNull()
+)
+
+# Yritykset, joilta puuttuu rahoitustiedot
+df_partial_info = df_cleaned.filter(
+    df_cleaned["Annual_Revenue"].isNotNull() &
+    df_cleaned["Number_of_Employees"].isNotNull() &
+    df_cleaned["Total_Funding"].isNull()
+)
+
+# Lasketaan mediaanit molemmille ryhmille
+mediaanit_full_info = df_full_info.select(
+    expr("percentile_approx(Annual_Revenue, 0.5)").alias("Median_Annual_Revenue"),
+    expr("percentile_approx(Number_of_Employees, 0.5)").alias("Median_Number_of_Employees")
+)
+
+mediaanit_partial_info = df_partial_info.select(
+    expr("percentile_approx(Annual_Revenue, 0.5)").alias("Median_Annual_Revenue"),
+    expr("percentile_approx(Number_of_Employees, 0.5)").alias("Median_Number_of_Employees")
+)
+
+# Näytetään tilastot molemmille ryhmille
+mediaanit_full_info.show()
+mediaanit_partial_info.show()
+```
+
+
+
+
