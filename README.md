@@ -1484,10 +1484,10 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 
-##Edistynyt Data-analyysi Sparkilla ja Azurella
+## Edistynyt Data-analyysi Sparkilla ja Azurella
 Tässä osiossa tutkittiin edistyneitä data-analyysitekniikoita käyttämällä Apache Sparkia ja Azuren palveluita. Suoritimme erilaisia operaatioita, kuten tietojen lataamista SQLite-tietokannasta, niiden käsittelyä Sparkilla ja tulosten tallentamista Azure Blob Storageen. Lisäksi sovelsimme koneoppimisalgoritmeja ja teimme sentimenttianalyysin tekstuaaliselle datalle.
 
-###Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
+### Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
 Aloitimme kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
 
 ```python
@@ -1511,7 +1511,7 @@ df = spark.read.format("jdbc").options(
 df.show(5)
 ```
 
-###Lineaarinen regressioanalyysi
+### Lineaarinen regressioanalyysi
 Suorin lineaarisen regressioanalyysin ennustaaksemme vuosiliikevaihtoa perustuen työntekijöiden määrään ja kunkin yrityksen käyttämien teknologioiden lukumäärään:
 ```python
 from pyspark.sql.functions import size, split, col
@@ -1553,7 +1553,7 @@ predictions.select("Company", "Annual_Revenue", "prediction").show(10)
 spark.conf.set(f"fs.azure.account.key.{storage_account_name}.blob.core.windows.net", storage_account_access_key)
 ```
 
-###K-Means-klusterointi
+### K-Means-klusterointi
 Sovelsin K-Means-klusterointia segmentoidaksemme yritykset työntekijöiden määrän ja vuosiliikevaihdon perusteella:
 ```python
 from pyspark.ml.clustering import KMeans
@@ -1615,7 +1615,7 @@ df_with_sentiment.select("Company", "SEO_Description", "Sentiment_Polarity").wri
 
 print(f"Sentimenttianalyysin tulokset tallennettu polkuun {output_path}")
 ```
-###Tilastollinen analyysi ja mediaanien laskeminen
+### Tilastollinen analyysi ja mediaanien laskeminen
 Ajattelin tietokantaa perusjoukkoja, ja vertasin yrityksiä joilla on monta rikasta datapistettä perusjoukkoon että tiedän mitä näyte edustavaa, yleisesti näyttää että paremmin dokumentoidut isommat yritykset ovat useammin edustettuja
 
 ```python
