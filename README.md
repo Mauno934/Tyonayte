@@ -1485,10 +1485,10 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 ## Edistynyt Data-analyysi Sparkilla ja Azurella
-Tässä osiossa tutkittiin edistyneitä data-analyysitekniikoita käyttämällä Apache Sparkia ja Azuren palveluita. Suoritimme erilaisia operaatioita, kuten tietojen lataamista SQLite-tietokannasta, niiden käsittelyä Sparkilla ja tulosten tallentamista Azure Blob Storageen. Lisäksi sovelsimme koneoppimisalgoritmeja ja teimme sentimenttianalyysin tekstuaaliselle datalle.
+Tässä osiossa tutustun Apache Sparkin sekä databricksin käyttöön. 
 
 ### Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
-Aloitimme kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
+Aloitin kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
 
 ```python
 # Kopioidaan tiedosto DBFS:stä paikalliselle ajurille
@@ -1512,7 +1512,7 @@ df.show(5)
 ```
 
 ### Lineaarinen regressioanalyysi
-Suorin lineaarisen regressioanalyysin ennustaaksemme vuosiliikevaihtoa perustuen työntekijöiden määrään ja kunkin yrityksen käyttämien teknologioiden lukumäärään:
+Suoritin lineaarisen regressioanalyysin ennustamaan vuosiliikevaihtoa perustuen työntekijöiden määrään ja kunkin yrityksen käyttämien teknologioiden lukumäärään:
 ```python
 from pyspark.sql.functions import size, split, col
 from pyspark.ml.feature import VectorAssembler
@@ -1554,7 +1554,7 @@ spark.conf.set(f"fs.azure.account.key.{storage_account_name}.blob.core.windows.n
 ```
 
 ### K-Means-klusterointi
-Sovelsin K-Means-klusterointia segmentoidaksemme yritykset työntekijöiden määrän ja vuosiliikevaihdon perusteella:
+Sovelsin K-Means-klusterointia segmentoimaan yritykset työntekijöiden määrän ja vuosiliikevaihdon perusteella:
 ```python
 from pyspark.ml.clustering import KMeans
 from pyspark.ml.feature import VectorAssembler
