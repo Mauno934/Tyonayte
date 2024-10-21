@@ -1,4 +1,4 @@
-# Työnäyte Python / AI / Power BI
+# Työnäyte Python / AI / Power BI / Azure Databricks (PySpark)
 
 Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. En voi muutenkaan jakaa työtä vaan suoraan sillä se olisi tietosuojan kannalta erittäin huono asia.
 Visualisointi on uutta eikä sille ole niin ollut tarvetta nykyisessä työpaikassa, joten tämä on kokeiluna hyvin mielenkiintoinen ja opettava.
@@ -7,7 +7,7 @@ jota ei haluattaisi jakaa.
 
 Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niiden tarkoitus on luoda riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osin myös näyttää siltä.
 
-Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös [Power BI osuuteen](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa [modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa. Haastavimmat datan käsittelyt ja laskennat Pythonilla, sekä niiden visualisointi löytyvät ihan [lopusta](#monimutkainen-data-ja-lopullinen-työ).
+Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös [Power BI osuuteen](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa [modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa. Haastavimmat datan käsittelyt ja laskennat Pythonilla, sekä niiden visualisointi löytyvät ihan [lopusta](#monimutkainen-data-ja-lopullinen-työ). Lisäsin myös hieman [Azurea](#edistynyt-data-analyysi-sparkilla-ja-azurella) jossa teen asioita databricksillä.
 
 Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua kehittymään monella osa-alueella. 
 
@@ -1487,7 +1487,7 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 ## Edistynyt Data-analyysi Sparkilla ja Azurella
-Tässä osiossa tutustun Apache Sparkin sekä databricksin käyttöön. 
+Tässä osiossa tutustun Apache Sparkin sekä Databricksin käyttöön. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä.
 
 ### Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
 Aloitin kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
@@ -1646,10 +1646,11 @@ tilastot = df_cleaned.select(
 # Näytetään mediaanit ja tilastot
 mediaanit.show()
 tilastot.show()
-Vertailimme myös yrityksiä, joilla on täydet tiedot (tiedot vuosiliikevaihdosta, työntekijöiden määrästä ja kokonaisrahoituksesta) niihin, joilta puuttuu osa tiedoista:
+```
+Vertailin myös yrityksiä, joilla on täydet tiedot (tiedot vuosiliikevaihdosta, työntekijöiden määrästä ja kokonaisrahoituksesta) niihin, joilta puuttuu osa tiedoista:
 
-python
-Kopioi koodi
+```python
+
 # Yritykset, joilla on tiedot kaikista kolmesta muuttujasta
 df_full_info = df_cleaned.filter(
     df_cleaned["Annual_Revenue"].isNotNull() &
@@ -1679,6 +1680,266 @@ mediaanit_partial_info = df_partial_info.select(
 mediaanit_full_info.show()
 mediaanit_partial_info.show()
 ```
+
+
+### Yritysten teknologiafokuksen analyysi
+Tavoite: Analysoida yritysten käyttämien teknologioiden vaikutusta niiden toimintaan.
+
+
+Aloitin lataamalla yritysdatan relevantit sarakkeet, kuten SEO-kuvauksen, teknologiat ja avainsanat:
+
+```python
+
+df = spark.read.format("jdbc").options(
+    url="jdbc:sqlite:/tmp/Apollo2.db",
+    dbtable="Companies",
+    driver="org.sqlite.JDBC"
+).load()
+```
+Suodatin pois yritykset, joilla ei ole teknologiatietoja:
+
+```python
+
+df_filtered = df.select("Company", "Technologies").filter(df["Technologies"].isNotNull())
+```
+Tokenisoin teknologiakentän:
+
+```python
+
+from pyspark.ml.feature import Tokenizer
+
+tokenizer = Tokenizer(inputCol="Technologies", outputCol="Tech_Words")
+df_tokenized = tokenizer.transform(df_filtered)
+```
+Poistin stop-sanat teknologiadataa siivotakseni:
+
+```python
+
+from pyspark.ml.feature import StopWordsRemover
+
+remover = StopWordsRemover(inputCol="Tech_Words", outputCol="Filtered_Tech_Words")
+df_cleaned = remover.transform(df_tokenized)
+```
+Sovelsin TF-IDF-analyysiä teknologioihin selvittääkseni yleisimmät ja vaikuttavimmat teknologiat:
+
+```python
+
+from pyspark.ml.feature import HashingTF, IDF
+
+hashingTF = HashingTF(inputCol="Filtered_Tech_Words", outputCol="RawFeatures", numFeatures=20)
+featurizedData = hashingTF.transform(df_cleaned)
+
+idf = IDF(inputCol="RawFeatures", outputCol="Features_TF_IDF")
+idfModel = idf.fit(featurizedData)
+df_tf_idf = idfModel.transform(featurizedData)
+```
+
+Lopuksi klusteroin yritykset K-means-algoritmilla teknologiafokuksen perusteella:
+
+```python
+
+from pyspark.ml.clustering import KMeans
+
+kmeans = KMeans(k=5, seed=1, featuresCol="Features_TF_IDF", predictionCol="Cluster")
+model = kmeans.fit(df_tf_idf)
+df_clusters = model.transform(df_tf_idf)
+```
+Yhdistin teknologiasanat yhdeksi tekstikentäksi tulosten tulkintaa helpottaakseni:
+
+```python
+
+from pyspark.sql.functions import concat_ws
+
+df_clusters = df_clusters.withColumn("Tech_Words_Text", concat_ws(",", "Filtered_Tech_Words"))
+```
+
+Näin sain ryhmiteltyä yritykset tarkemmin kuin aiemmilla luokilla. 
+
+### SEO-optimointi ja avainsanakeskeinen analyysi
+Tavoite: Tutkia SEO-kuvausten ja avainsanojen yhteyttä yritysten menestykseen.
+
+
+
+```python
+
+df = spark.read.format("jdbc").options(
+    url="jdbc:sqlite:/tmp/Apollo2.db",
+    dbtable="Companies",
+    driver="org.sqlite.JDBC"
+).load()
+
+from pyspark.sql.functions import regexp_replace
+
+df_cleaned = df.withColumn("SEO_Description_Cleaned", regexp_replace("SEO_Description", "[^a-zA-Z0-9 ]", ""))`
+```
+
+Suoritin sentimenttianalyysin TextBlob-kirjaston avulla selvittääkseni SEO-kuvausten sävyn:
+
+```python
+
+from textblob import TextBlob
+from pyspark.sql.functions import udf
+from pyspark.sql.types import StringType
+
+def get_sentiment(text):
+    if text is None or text == "":
+        return "neutral"
+    analysis = TextBlob(text)
+    if analysis.sentiment.polarity > 0:
+        return "positive"
+    elif analysis.sentiment.polarity < 0:
+        return "negative"
+    else:
+        return "neutral"
+
+sentiment_udf = udf(get_sentiment, StringType())
+df_sentiment = df_cleaned.withColumn("SEO_Sentiment", sentiment_udf("SEO_Description_Cleaned"))
+```
+
+Analysoin avainsanat löytääkseni yleisimmät termit:
+
+```python
+
+from pyspark.sql.functions import split, explode, col
+
+df_keywords = df_sentiment.withColumn("Keywords_Split", split(col("Keywords"), ","))
+df_exploded_keywords = df_keywords.withColumn("Keyword", explode("Keywords_Split"))
+df_keyword_counts = df_exploded_keywords.groupBy("Keyword").count().orderBy(col("count").desc())
+```
+Tämän tapainen skripti on hyvä selvittämään parhaita SEO-käytäntöjä mutta huomioitavaa on että versioni on varsin alkeellinen. 
+
+### Tittelien ja organisaatiorakenteen perusteella yritysten mallintaminen
+Tavoite: Analysoida yritysten organisaatiorakennetta kontaktien tittelien perusteella.
+
+
+Latasin kontaktitiedot ja puhdistin tittelit poistamalla erikoismerkit ja muuttamalla tekstin pieniksi kirjaimiksi:
+
+```python
+
+df_contacts = spark.read.format("jdbc").options(
+    url="jdbc:sqlite:/tmp/Apollo2.db",
+    dbtable="Contacts",
+    driver="org.sqlite.JDBC"
+).load()
+
+from pyspark.sql.functions import lower, regexp_replace
+
+df_contacts_cleaned = df_contacts.filter(df_contacts["Title"].isNotNull())
+df_contacts_cleaned = df_contacts_cleaned.withColumn("Cleaned_Title", lower(regexp_replace("Title", "[^a-zA-Z0-9]", " ")))
+```
+Tokenisoin tittelit ja ryhmittelin ne yleisyyden mukaan:
+
+```python
+
+from pyspark.ml.feature import Tokenizer
+
+tokenizer = Tokenizer(inputCol="Cleaned_Title", outputCol="Tokenized_Title")
+df_tokenized = tokenizer.transform(df_contacts_cleaned)
+
+df_title_counts = df_tokenized.groupBy("Tokenized_Title").count().orderBy(col("count").desc())
+```
+Muunsin tittelit numeeriseen muotoon CountVectorizerin avulla ja klusteroin ne K-means-algoritmilla:
+
+```python
+
+from pyspark.ml.feature import CountVectorizer
+from pyspark.ml.clustering import KMeans
+
+cv = CountVectorizer(inputCol="Tokenized_Title", outputCol="Title_Features")
+cv_model = cv.fit(df_tokenized)
+df_title_features = cv_model.transform(df_tokenized)
+
+kmeans = KMeans(k=3, seed=1)
+kmeans_model = kmeans.fit(df_title_features)
+df_clustered_contacts = kmeans_model.transform(df_title_features)
+```
+
+Yhdistin tulokset yritystauluun ja analysoin organisaatiorakenteen eri klustereissa:
+
+```python
+
+df_companies = spark.read.format("jdbc").options(
+    url="jdbc:sqlite:/tmp/Apollo2.db",
+    dbtable="Companies",
+    driver="org.sqlite.JDBC"
+).load()
+
+df_merged = df_companies.join(df_clustered_contacts, "Company", "left")
+```
+Näin pystyin mallintamaan yritysten organisaatiorakenteen kontaktien tittelien perusteella. Jos skriptiä muokkaisi hieman ja jatkokehittäisi tuloksien perusteella asioita, tämän tapaisella teknologialla voisi ennustaa esim. onko projekti / matriisiyritys.
+
+
+
+
+
+### Yrityssegmenttien ennustaminen kokonaisvaltaisella lähestymistavalla
+Tavoite: Ennustaa yrityssegmenttejä yhdistämällä yritysdatan eri osat.
+
+Tekniikka:
+
+Yhdistin yritysten SEO-kuvaukset, toimialat, teknologiat ja kontaktien tiedot analyysiä varten:
+
+```python
+
+df_companies = spark.read.format("jdbc").options(
+    url="jdbc:sqlite:/tmp/Apollo2.db",
+    dbtable="Companies",
+    driver="org.sqlite.JDBC"
+).load()
+
+df_contacts = spark.read.format("jdbc").options(
+    url="jdbc:sqlite:/tmp/Apollo2.db",
+    dbtable="Contacts",
+    driver="org.sqlite.JDBC"
+).load()
+```
+Suoritin tekstin tokenisoinnin ja TF-IDF-muunnoksen saadakseni numeerisia ominaisuuksia tekstidatasta:
+
+```python
+
+from pyspark.ml.feature import Tokenizer, StopWordsRemover, HashingTF, IDF
+
+df_filtered = df_companies.select("Company", "Short_Description", "Industry", "Number_of_Employees") \
+    .filter(df_companies["Short_Description"].isNotNull())
+
+tokenizer = Tokenizer(inputCol="Short_Description", outputCol="tokens")
+df_tokenized = tokenizer.transform(df_filtered)
+
+remover = StopWordsRemover(inputCol="tokens", outputCol="filtered_tokens")
+df_filtered_tokens = remover.transform(df_tokenized)
+
+hashingTF = HashingTF(inputCol="filtered_tokens", outputCol="raw_features", numFeatures=10000)
+featurized_data = hashingTF.transform(df_filtered_tokens)
+
+idf = IDF(inputCol="raw_features", outputCol="tfidf_features")
+idf_model = idf.fit(featurized_data)
+df_tfidf = idf_model.transform(featurized_data)
+```
+Yhdistin ominaisuudet ja klusteroin yritykset K-means-algoritmilla:
+
+```python
+
+from pyspark.ml.feature import VectorAssembler
+from pyspark.ml.clustering import KMeans
+
+assembler = VectorAssembler(inputCols=["tfidf_features", "Number_of_Employees"], outputCol="features")
+df_features = assembler.transform(df_tfidf)
+
+kmeans = KMeans(k=5, seed=1)
+kmeans_model = kmeans.fit(df_features)
+df_clusters = kmeans_model.transform(df_features)
+```
+Analysoin ja visualisoin tulokset eri segmenttien ja klustereiden mukaan, mikä auttoi ymmärtämään yritysten jakautumista eri markkinasegmentteihin:
+
+```python
+
+df_clusters.select("Company", "Industry", "Number_of_Employees", "prediction").show(20)
+```
+Näin sain kokonaisvaltaisen kuvan yritysten segmentoinnista yhdistämällä eri datalähteet ja analyysimenetelmät.
+
+
+
+
 
 
 
