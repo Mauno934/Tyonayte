@@ -1578,9 +1578,11 @@ clusters.select("Company", "Number_of_Employees", "Annual_Revenue", "prediction"
 
 
 ### Tallenna klusteroinnin tulokset CSV-muodossa Blob Storageen
+```python
 clusters.select("Company", "Number_of_Employees", "Annual_Revenue", "prediction").write.mode("overwrite").csv(output_path)
 
 print(f"Klusteroinnin tulokset tallennettu polkuun {output_path}")
+```
 ###Sentimenttianalyysi SEO-kuvauksille
 Käyttäen TextBlob-kirjastoa, tein sentimenttianalyysin SEO-kuvauksille testaamaan yrityksen kuvauksen välittämän tunteen analysointia:
 ```python
