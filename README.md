@@ -1486,7 +1486,7 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 
-## Edistynyt Data-analyysi Sparkilla ja Azurella
+## Edistynyt data-analyysi PySparkilla ja Azurella
 Tässä osiossa tutustun Apache Sparkin sekä Databricksin käyttöön. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä.
 
 ### Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
