@@ -1620,7 +1620,7 @@ df_with_sentiment.select("Company", "SEO_Description", "Sentiment_Polarity").wri
 print(f"Sentimenttianalyysin tulokset tallennettu polkuun {output_path}")
 ```
 ### Tilastollinen analyysi ja mediaanien laskeminen
-Ajattelin tietokantaa perusjoukkoja, ja vertasin yrityksiä joilla on monta rikasta datapistettä perusjoukkoon että tiedän mitä näyte edustavaa, yleisesti näyttää että paremmin dokumentoidut isommat yritykset ovat useammin edustettuja
+Ajattelin tietokantaa perusjoukkona, ja vertasin yrityksiä joilla on monta rikasta datapistettä perusjoukkoon, yleisesti näyttää että paremmin dokumentoidut isommat yritykset ovat useammin edustettuja.
 
 ```python
 from pyspark.sql.functions import expr, avg, min, max
