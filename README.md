@@ -41,7 +41,7 @@ Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua k
 - [Power BI](#power-bi)
   - [Datan formatointi ja visualisointi](#datan-formatointi-ja-visualisointi)
   - [Monimutkainen data ja lopullinen työ](#monimutkainen-data-ja-lopullinen-työ)
-  [Edistynyt Data-analyysi Sparkilla ja Azurella](#edistynyt-data-analyysi-sparkilla-ja-azurella)
+ - [Edistynyt Data-analyysi Sparkilla ja Azurella](#edistynyt-data-analyysi-sparkilla-ja-azurella)
 
 
 
