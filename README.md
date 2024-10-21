@@ -1,7 +1,6 @@
 # Työnäyte Python / AI / Power BI / Azure Databricks (PySpark)
 
-Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. En voi muutenkaan jakaa työtä vaan suoraan sillä se olisi tietosuojan kannalta erittäin huono asia.
-Visualisointi on uutta eikä sille ole niin ollut tarvetta nykyisessä työpaikassa, joten tämä on kokeiluna hyvin mielenkiintoinen ja opettava.
+Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. 
 Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin tietynlaisen samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
 jota ei haluattaisi jakaa. 
 
