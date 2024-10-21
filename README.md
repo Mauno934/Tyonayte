@@ -1487,10 +1487,10 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 ## Edistynyt data-analyysi PySparkilla ja Azurella
-Tässä osiossa tutustun Apache Sparkin sekä Databricksin käyttöön. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä.
+Tässä osiossa tutustun Apache Sparkin sekä Databricksin käyttöön. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä. Azuresta on kokemusta jonkin verran mutta en ole sitä tällaisena alustana käyttänyt mitä databricks tarjoaa. Databricks vaikuttaa todella hauskalta ympäristöltä jossa työskennellä tiimin kanssa datan parissa! On aika mielenkiintoinen kontrasti teknologiassa pienellä tiimillä josta kokonainen yritys muodostuu verrattuna tällaiseen infrakstruktuuriin jota usein isommat yritykset suosivat. Loppuunsa samoja keskeisiä asioita, joitain uusia ongelmia ja haasteita joihin pitää kiinnittää huomiota. Skriptien ideiointi tässä osuudessa ei ollut luovinta, halusin tuottaa jättiläismäisen idean jolla segmentoidaan uudenlaisella tavalla mutta tajusin etten ehtisi laittaa tätä osuutta ollenkaan joten tyydyin näihin esimerkkeihin. Näissä on jotain ideaa komponentteina, ja jos lukija huomaa esimerkiksi sen että tulosten järjestely on huono, ei sisällä mitään id:tä (paitsi nimen) niin se on ihan totta, tein monta skriptiä tässä ja en ehtinyt niitä hirveämmin hioa kun halusin saada toimimaan. Ymmärrän paljolti tietokantatarpeista, lähinnä manuaalisen työn huolellisen automatisoinnin kautta. Jouduin nimittäin itse tekemään sen manuaalisen työn (kerääminen järjestely, kaikki mikä nykyään hoituu kädenkäänteessä esim pythonilla) , joten tietokantojen mallinnusperiaatteet tulivat kuin luonnostaan. 
 
 ### Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
-Aloitin kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
+Aloitin kopioimalla SQLite-tietokantatiedoston (kyllä, SQlite) Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
 
 ```python
 # Kopioidaan tiedosto DBFS:stä paikalliselle ajurille
@@ -1937,7 +1937,7 @@ Analysoin ja visualisoin tulokset eri segmenttien ja klustereiden mukaan, mikä 
 
 df_clusters.select("Company", "Industry", "Number_of_Employees", "prediction").show(20)
 ```
-Näin sain kokonaisvaltaisen kuvan yritysten segmentoinnista yhdistämällä eri datalähteet ja analyysimenetelmät.
+Tällaiseen segmentointiin voisi yhdistää esim tekoälyn sekä paljon laadullisempaa dataa niin saisi aikamoisen kokonaisuuden.
 
 
 
