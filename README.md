@@ -1500,7 +1500,7 @@ dbutils.fs.cp("dbfs:/dbfs/tmp/Tietokanta.db", "file:/tmp/Tietokanta.db")
 local_file_path_for_spark = "file:/tmp/Tietokanta.db"
 SQLite-datan lataaminen Spark DataFrameen
 Käyttämällä JDBC
-ä latasimme tiedot SQLite-tietokannasta Spark DataFrameen käsittelyä varten:
+ä latasin tiedot SQLite-tietokannasta Spark DataFrameen käsittelyä varten:
 
 # Ladataan SQLite-tiedosto Spark DataFrameen JDBC:n kautta
 df = spark.read.format("jdbc").options(
@@ -1605,10 +1605,10 @@ df_with_sentiment = df.withColumn("Sentiment_Polarity", sentiment_udf(df["SEO_De
 
 # Näytetään tulokset
 df_with_sentiment.select("Company", "SEO_Description", "Sentiment_Polarity").show(10, truncate=False)
+```
 Sentimenttianalyysin tulosten tallentaminen
-Tallensimme sentimenttianalyysin tulokset Azure Blob Storageen:
 
-
+```python
 output_blob_name = "seo_sentiment_analysis.csv"
 output_path = f"wasbs://{container_name}@{storage_account_name}.blob.core.windows.net/{output_blob_name}"
 
