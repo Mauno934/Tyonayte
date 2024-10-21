@@ -1502,11 +1502,12 @@ dbutils.fs.cp("dbfs:/dbfs/tmp/Tietokanta.db", "file:/tmp/Tietokanta.db")
 
 # Paikallisen tiedoston polku Sparkille
 local_file_path_for_spark = "file:/tmp/Tietokanta.db"
+```
 SQLite-datan lataaminen Spark DataFrameen
-Käyttämällä JDBC
-ä latasin tiedot SQLite-tietokannasta Spark DataFrameen käsittelyä varten:
+Käyttämällä JDBC:tä latasin tiedot SQLite-tietokannasta Spark DataFrameen käsittelyä varten:
 
 # Ladataan SQLite-tiedosto Spark DataFrameen JDBC:n kautta
+```python
 df = spark.read.format("jdbc").options(
     url=f"jdbc:sqlite:{local_file_path_for_spark}",
     dbtable="Companies",
@@ -1524,7 +1525,7 @@ from pyspark.sql.functions import size, split, col
 from pyspark.ml.feature import VectorAssembler
 from pyspark.ml.regression import LinearRegression
 
-# Oletetaan, että 'Technologies' on sarake, joka sisältää teknologioiden luettelon
+
 # Lisätään uusi sarake "Technology_Count", joka laskee teknologioiden määrän per yritys
 df = df.withColumn("Technology_Count", size(split(col("Technologies"), ",")))
 
