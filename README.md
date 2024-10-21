@@ -1494,10 +1494,10 @@ Aloitin kopioimalla SQLite-tietokantatiedoston Databricks File Systemistä (DBFS
 
 ```python
 # Kopioidaan tiedosto DBFS:stä paikalliselle ajurille
-dbutils.fs.cp("dbfs:/dbfs/tmp/Apollo2.db", "file:/tmp/Apollo2.db")
+dbutils.fs.cp("dbfs:/dbfs/tmp/Tietokanta.db", "file:/tmp/Tietokanta.db")
 
 # Paikallisen tiedoston polku Sparkille
-local_file_path_for_spark = "file:/tmp/Apollo2.db"
+local_file_path_for_spark = "file:/tmp/Tietokanta.db"
 SQLite-datan lataaminen Spark DataFrameen
 Käyttämällä JDBC
 ä latasimme tiedot SQLite-tietokannasta Spark DataFrameen käsittelyä varten:
@@ -1691,7 +1691,7 @@ Aloitin lataamalla yritysdatan relevantit sarakkeet, kuten SEO-kuvauksen, teknol
 ```python
 
 df = spark.read.format("jdbc").options(
-    url="jdbc:sqlite:/tmp/Apollo2.db",
+    url="jdbc:sqlite:/tmp/Tietokanta.db",
     dbtable="Companies",
     driver="org.sqlite.JDBC"
 ).load()
@@ -1763,7 +1763,7 @@ Tavoite: Tutkia SEO-kuvausten ja avainsanojen yhteyttä yritysten menestykseen.
 ```python
 
 df = spark.read.format("jdbc").options(
-    url="jdbc:sqlite:/tmp/Apollo2.db",
+    url="jdbc:sqlite:/tmp/Tietokanta.db",
     dbtable="Companies",
     driver="org.sqlite.JDBC"
 ).load()
@@ -1817,7 +1817,7 @@ Latasin kontaktitiedot ja puhdistin tittelit poistamalla erikoismerkit ja muutta
 ```python
 
 df_contacts = spark.read.format("jdbc").options(
-    url="jdbc:sqlite:/tmp/Apollo2.db",
+    url="jdbc:sqlite:/tmp/Tietokanta.db",
     dbtable="Contacts",
     driver="org.sqlite.JDBC"
 ).load()
@@ -1859,7 +1859,7 @@ Yhdistin tulokset yritystauluun ja analysoin organisaatiorakenteen eri klusterei
 ```python
 
 df_companies = spark.read.format("jdbc").options(
-    url="jdbc:sqlite:/tmp/Apollo2.db",
+    url="jdbc:sqlite:/tmp/Tietokanta.db",
     dbtable="Companies",
     driver="org.sqlite.JDBC"
 ).load()
@@ -1882,13 +1882,13 @@ Yhdistin yritysten SEO-kuvaukset, toimialat, teknologiat ja kontaktien tiedot an
 ```python
 
 df_companies = spark.read.format("jdbc").options(
-    url="jdbc:sqlite:/tmp/Apollo2.db",
+    url="jdbc:sqlite:/tmp/Tietokanta.db",
     dbtable="Companies",
     driver="org.sqlite.JDBC"
 ).load()
 
 df_contacts = spark.read.format("jdbc").options(
-    url="jdbc:sqlite:/tmp/Apollo2.db",
+    url="jdbc:sqlite:/tmp/Tietokanta.db",
     dbtable="Contacts",
     driver="org.sqlite.JDBC"
 ).load()
