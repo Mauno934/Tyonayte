@@ -1,12 +1,13 @@
 # Työnäyte Python / AI / Power BI / Azure Databricks (PySpark)
 
-Ajattelin tutustua yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. 
+Ajattelin syventyä yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. Teknologia on osittain tuttu Power Queryä muistuttavan Power Toolsin kautta joten sen navigointi onnistuu helposti. Tarkoitus on tehdä asioita järjestelemällä prosessi monella eri tavalla niin ettei myöskään ota helppoa reittiä ulos.
+
 Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin tietynlaisen samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
 jota ei haluattaisi jakaa. 
 
 Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niiden tarkoitus on luoda riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osin myös näyttää siltä.
 
-Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös [Power BI osuuteen](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa [modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa. Haastavimmat datan käsittelyt ja laskennat Pythonilla, sekä niiden visualisointi löytyvät ihan [lopusta](#monimutkainen-data-ja-lopullinen-työ). Lisäsin myös hieman [Azurea](#edistynyt-data-analyysi-pysparkilla-ja-azurella) jossa teen asioita Databricksillä käyttäen PySpark, toteutan siinä samanlaisia ideoita mitä töissä on tullut vastaan mutta hieman eri suunnasta.
+Koska dokumentti on hyvin laaja ja arviointiin ei välttämättä voi niin paljon aikaa käyttää, sisällytin keskeisiä skriptejä myös [Power BI osuuteen](#power-bi) jossa tulee tiivistetymmin asioita mutta kattaa eri osuuksia samanaikaisesti. Kohdassa [modernit tietokantaratkaisut tekoälyllä](#modernit-tietokantaratkaisut-tekoälyllä) esittelen myös yksinkertaista tekoälyratkaisua paljon käytetyissä Regex operaatioissa. Haastavimmat datan käsittelyt ja laskennat Pythonilla, sekä niiden visualisointi löytyvät ihan [lopusta](#monimutkainen-data-ja-lopullinen-työ). Lisäsin myös hieman [Azurea](#edistynyt-data-analyysi-pysparkilla-ja-azurella) jossa teen asioita Databricksillä käyttäen PySpark, toteutan siinä samanlaisia ideoita mitä töissä on tullut vastaan mutta hieman eri suunnasta. Skriptit tässä ajan vuoksi pidetty yksinkertaisina sampleina, aion lisätä myöhemmin monimutkaisemman kokonaisuuden
 
 Tämän kokonaisuuden luominen oli erittäin mielenkiintoista ja innosti minua kehittymään monella osa-alueella. 
 
@@ -1486,12 +1487,15 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 # Edistynyt data-analyysi PySparkilla ja Azurella
-Tässä osiossa tutustun Apache Sparkin sekä Databricksin käyttöön. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä. Azuresta on kokemusta jonkin verran mutta en ole sitä tällaisena alustana käyttänyt mitä databricks tarjoaa. Databricks vaikuttaa todella hauskalta ympäristöltä jossa työskennellä tiimin kanssa datan parissa! On aika mielenkiintoinen kontrasti teknologiassa pienellä tiimillä josta kokonainen yritys muodostuu verrattuna tällaiseen infrakstruktuuriin jota usein isommat yritykset suosivat. Loppuunsa samoja keskeisiä asioita, joitain uusia ongelmia ja haasteita joihin pitää kiinnittää huomiota. 
+Tässä osiossa esittelen Apache Sparkin sekä Databricksin käyttöä. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä. Databricks vaikuttaa todella hauskalta ympäristöltä jossa työskennellä tiimin kanssa datan parissa! On aika mielenkiintoinen kontrasti teknologiassa pienellä tiimillä josta kokonainen yritys muodostuu verrattuna tällaiseen infrakstruktuuriin jota usein isommat yritykset suosivat. Loppuunsa samoja keskeisiä asioita, joitain uusia ongelmia ja haasteita joihin pitää kiinnittää huomiota. 
 
-Skriptien ideiointi tässä osuudessa ei ollut luovinta, halusin tuottaa jättiläismäisen idean jolla segmentoidaan uudenlaisella tavalla mutta tajusin etten ehtisi laittaa tätä osuutta ollenkaan joten tyydyin näihin esimerkkeihin. Näissä on jotain ideaa komponentteina, ja jos lukija huomaa esimerkiksi sen että tulosten järjestely on huono, ei sisällä mitään id:tä (paitsi nimen) niin se on ihan totta, tein monta skriptiä tässä ja en ehtinyt niitä hirveämmin hioa kun halusin saada toimimaan. 
+Skriptien ideiointi tässä osuudessa ei ollut luovinta, halusin tuottaa jättiläismäisen idean jolla dataa segmentoidaan uudenlaisella tavalla mutta tajusin etten ehtisi laittaa tätä osuutta ollenkaan joten tyydyin näihin esimerkkeihin. Näissä on jotain ideaa komponentteina, ja jos lukija huomaa esimerkiksi sen että tulosten järjestely on huono, ei sisällä mitään id:tä (paitsi nimen) niin se on ihan totta, tein monta skriptiä tässä ja en ehtinyt niitä hirveämmin määritellä pidemmälle, tarkoitus olisi täydentää, testata ja kehittää niin että olisi käytäntöä sekä myös näyttää datavirtojen aloittamista.
 
+Azure on hyvin erilainen lähtökohtiini verrattuna.
 Ymmärrän tietokantatarpeista sekä mallinnusperiaatteista, lähinnä manuaalisen työn huolellisen automatisoinnin kautta. 
-Jouduin nimittäin itse tekemään sen manuaalisen työn (kerääminen järjestely, kaikki mikä nykyään hoituu kädenkäänteessä esim pythonilla) , joten tietokantojen mallinnusperiaatteet tulivat kuin luonnostaan. 
+Jouduin nimittäin itse tekemään sen manuaalisen työn (kerääminen järjestely, kaikki mikä nykyään hoituu kädenkäänteessä esim pythonilla) ,joten tietokantojen mallinnusperiaatteet tulivat kuin luonnostaan, jos jostain katosi tieto, tai jotain hävisi, oppi luomaan periaatteita noiden asioiden tapahtumisen estämisen ympärille.
+
+Aloitetaan osuus alustamisella, käyttäen SQL paikallisella ajurilla 
 
 ### Tiedostojen kopiointi DBFS:tä paikalliselle ajurille
 Aloitin kopioimalla SQLite-tietokantatiedoston (kyllä, SQlite) Databricks File Systemistä (DBFS) paikalliselle ajurille, jotta Spark voi käyttää sitä:
