@@ -1,9 +1,4 @@
 ```mermaid
-%%{init: {"theme": "base", "themeVariables": {"primaryColor": "#F3E5F5", "edgeLabelBackground":"#ffffff"}} }%%
----
-config:
-  layout: elk
----
 flowchart TD
  subgraph DataComponents["DataComponents"]
         SQLperusjoukko["SQL Perusjoukko ilman toimenpiteitä"]
@@ -86,9 +81,9 @@ flowchart TD
     Uudistaminen --> MasterDataUnit
     Ylläpito --> MasterDataUnit
     Tekoäly --> MasterDataUnit
-    Ylläpito --                                              Testaus ja linkityksen hallinta                                              --> VientiCRM
-    Uudistaminen --                                              Data- ja raportointivalmistelut                                              --> VientiCRM
-    Tekoäly --                                              Automaatio ja rikastus                                              --> VientiCRM
+    Ylläpito -- Testaus ja linkityksen hallinta --> VientiCRM
+    Uudistaminen -- Data- ja raportointivalmistelut --> VientiCRM
+    Tekoäly -- Automaatio ja rikastus --> VientiCRM
     style MasterDataUnit fill:#FFD54F,stroke:#FF6F00,stroke-width:2px
     style VientiCRM fill:#B3E5FC,stroke:#0288D1,stroke-width:2px
     style Segmentointi fill:#FFF3E0,stroke:#FB8C00,stroke-width:2px
