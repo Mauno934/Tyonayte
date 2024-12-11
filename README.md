@@ -1492,13 +1492,7 @@ Ja tässäpä on oikeastaan kaikki!
 
 
 # Edistynyt data-analyysi PySparkilla ja Azurella
-Tässä osiossa esittelen Apache Sparkin sekä Databricksin käyttöä. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä. Databricks vaikuttaa todella hauskalta ympäristöltä jossa työskennellä tiimin kanssa datan parissa! On aika mielenkiintoinen kontrasti teknologiassa pienellä tiimillä josta kokonainen yritys muodostuu verrattuna tällaiseen infrakstruktuuriin jota usein isommat yritykset suosivat. Loppuunsa samoja keskeisiä asioita, joitain uusia ongelmia ja haasteita joihin pitää kiinnittää huomiota. 
-
-Skriptien ideiointi tässä osuudessa ei ollut luovinta, halusin tuottaa jättiläismäisen idean jolla dataa segmentoidaan uudenlaisella tavalla mutta tajusin etten ehtisi laittaa tätä osuutta ollenkaan joten tyydyin näihin esimerkkeihin. Näissä on jotain ideaa komponentteina, ja jos lukija huomaa esimerkiksi sen että tulosten järjestely on huono, ei sisällä mitään id:tä (paitsi nimen) niin se on ihan totta, tein monta skriptiä tässä ja en ehtinyt niitä hirveämmin määritellä pidemmälle, tarkoitus olisi täydentää, testata ja kehittää niin että olisi käytäntöä sekä myös näyttää datavirtojen aloittamista.
-
-Azure on hyvin erilainen lähtökohtiini verrattuna.
-Ymmärrän tietokantatarpeista sekä mallinnusperiaatteista, lähinnä manuaalisen työn huolellisen automatisoinnin kautta. 
-Jouduin nimittäin itse tekemään sen manuaalisen työn (kerääminen järjestely, kaikki mikä nykyään hoituu kädenkäänteessä esim pythonilla) ,joten tietokantojen mallinnusperiaatteet tulivat kuin luonnostaan, jos jostain katosi tieto, tai jotain hävisi, oppi luomaan periaatteita noiden asioiden tapahtumisen estämisen ympärille.
+Tässä osiossa esittelen Apache Sparkin sekä Databricksin käyttöä. Kaikki skriptit todellisuudessa vaatisivat enemmän kehitystä ja ovat vain pohja nyt aluksi
 
 Aloitetaan osuus alustamisella, käyttäen SQL paikallisella ajurilla 
 
