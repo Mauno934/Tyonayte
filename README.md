@@ -1875,7 +1875,6 @@ df_companies = spark.read.format("jdbc").options(
 
 df_merged = df_companies.join(df_clustered_contacts, "Company", "left")
 ```
-Näin pystyin mallintamaan yritysten organisaatiorakenteen kontaktien tittelien perusteella. Jos skriptiä muokkaisi hieman ja jatkokehittäisi tuloksien perusteella asioita, tämän tapaisella teknologialla voisi ennustaa esim. onko projekti / matriisiyritys.
 
 
 
@@ -1938,13 +1937,11 @@ kmeans = KMeans(k=5, seed=1)
 kmeans_model = kmeans.fit(df_features)
 df_clusters = kmeans_model.transform(df_features)
 ```
-Analysoin ja visualisoin tulokset eri segmenttien ja klustereiden mukaan, mikä auttoi ymmärtämään yritysten jakautumista eri markkinasegmentteihin:
 
 ```python
 
 df_clusters.select("Company", "Industry", "Number_of_Employees", "prediction").show(20)
 ```
-Tällaiseen segmentointiin voisi yhdistää esim tekoälyn sekä paljon laadullisempaa dataa niin saisi aikamoisen kokonaisuuden.
 
 
 
