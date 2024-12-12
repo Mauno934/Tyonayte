@@ -1,7 +1,7 @@
 # Työnäyte, teknologioiden omaksuminen
 Python / AI / Power BI / Azure Databricks (PySpark)
 
-Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä esim. raportointiin tai vastaavaan koskevasta datasta. Joten konteksti on tässä teknologioiden omaksuminen enemmän kuin selkeän raportteihin mallintamisen tekeminen. Julkaisen myöhemmin varovasti tehdyn näytteen dimensionaalisesta mallintamisesta ja liiketoiminnan kehittämisestä.
+Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä esim. raportointiin tai vastaavaan koskevasta datasta. Joten konteksti on tässä teknologioiden omaksuminen enemmän kuin selkeän raportteihin mallintamisen tekeminen. Henkilökohtaiset kiinnostukseni ohjaavat tekemistä tässä enemmän kuin yrityksen liiketoiminnallinen kehitys.
 
 
 
