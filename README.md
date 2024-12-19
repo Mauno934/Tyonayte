@@ -5,7 +5,7 @@ Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä osaamisestani johtu
 
 
 
-Ajattelin syventyä yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. Teknologia on osittain tuttu Power Queryä muistuttavan Power Toolsin kautta joten sen navigointi onnistuu helposti. Tarkoitus on tehdä asioita järjestelemällä prosessi monella eri tavalla niin ettei myöskään ota helppoa reittiä ulos.
+Ajattelin syventyä yhdessä työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. Teknologia on osittain tuttu Power Queryä muistuttavan Power Toolsin kautta joten sen navigointi onnistuu helposti. Tarkoitus on tehdä asioita järjestelemällä prosessi monella eri tavalla niin ettei myöskään ota helppoa reittiä ulos.
 
 Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin rajatun samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
 jota ei haluattaisi jakaa. Näyte on siis hyvin koodipainotteinen toteutukseltaan.
