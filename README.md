@@ -1,14 +1,14 @@
 # Työnäyte, teknologioiden omaksuminen
 Python / AI / Power BI 
 
-Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä esim. raportointiin tai vastaavaan koskevasta datasta. Joten konteksti on tässä teknologioiden omaksuminen, asioiden hahmottelu lennosta.
+Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä osaamisestani johtuen esim. tietosuojasta. Tässä luon yksinkertaisia pisteitysmekanismeja, luon mittareita ja kehittelen asioita lennosta. Analyysejä ei kannata ottaa liian vakavasti, tarkoitus on kuvata ajatusprosessiani oppimisessa.
 
 
 
 Ajattelin syventyä yhteen työpaikkakuvauksessa mainittuun teknologiaan ja tehdä sen ympärille monipuolisen työnäytteen. Teknologia on osittain tuttu Power Queryä muistuttavan Power Toolsin kautta joten sen navigointi onnistuu helposti. Tarkoitus on tehdä asioita järjestelemällä prosessi monella eri tavalla niin ettei myöskään ota helppoa reittiä ulos.
 
-Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin tietynlaisen samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
-jota ei haluattaisi jakaa. 
+Sisällytin paljon omaa koodia tähän jotka loin aikapitkälti lennosta, ainoastaan tekoälyskripti oli aiempaa kokeilua. En myöskään liittänyt SQL suoraan vaan otin rajatun samplen csv muodossa jotta en jakaisi rakenteita tai tietoa
+jota ei haluattaisi jakaa. Näyte on siis hyvin koodipainotteinen toteutukseltaan.
 
 Työnäyteessä tehdyt osat eivät ole täydellisiä vaan niiden tarkoitus on luoda riittävän kattava kokonaisuus, aikaa minulla oli vain muutama päivä joten koodi voi osin myös näyttää siltä.
 
