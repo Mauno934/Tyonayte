@@ -1,7 +1,7 @@
 # Työnäyte, teknologioiden omaksuminen
 Python / AI / Power BI 
 
-Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä esim. raportointiin tai vastaavaan koskevasta datasta. Joten konteksti on tässä teknologioiden omaksuminen enemmän kuin selkeän raportteihin mallintamisen tekeminen. Henkilökohtaiset kiinnostukseni ohjaavat tekemistä tässä enemmän kuin yrityksen liiketoiminnallinen kehitys.
+Aluksi haluan sanoa että on hyvin vaikeaa antaa esimerkkiä esim. raportointiin tai vastaavaan koskevasta datasta. Joten konteksti on tässä teknologioiden omaksuminen, asioiden hahmottelu lennosta.
 
 
 
